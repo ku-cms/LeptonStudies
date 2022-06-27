@@ -82,9 +82,9 @@ def run(plot_dir, sample_name, tree):
     h_LowPtElectron_dxy         = ROOT.TH1F("h_LowPtElectron_dxy",          "h_LowPtElectron_dxy",          50,  -0.02,  0.02)
     h_LowPtElectron_dxyErr      = ROOT.TH1F("h_LowPtElectron_dxyErr",       "h_LowPtElectron_dxyErr",       50,      0,  0.1)
     h_LowPtElectron_dxySig      = ROOT.TH1F("h_LowPtElectron_dxySig",       "h_LowPtElectron_dxySig",       50,      0,  5.0)
-    h_LowPtElectron_dz          = ROOT.TH1F("h_LowPtElectron_dz",           "h_LowPtElectron_dz",          50,  -0.02,  0.02)
-    h_LowPtElectron_dzErr       = ROOT.TH1F("h_LowPtElectron_dzErr",        "h_LowPtElectron_dzErr",       50,      0,  0.1)
-    h_LowPtElectron_dzSig       = ROOT.TH1F("h_LowPtElectron_dzSig",        "h_LowPtElectron_dzSig",       50,      0,  5.0)
+    h_LowPtElectron_dz          = ROOT.TH1F("h_LowPtElectron_dz",           "h_LowPtElectron_dz",           50,  -0.02,  0.02)
+    h_LowPtElectron_dzErr       = ROOT.TH1F("h_LowPtElectron_dzErr",        "h_LowPtElectron_dzErr",        50,      0,  0.1)
+    h_LowPtElectron_dzSig       = ROOT.TH1F("h_LowPtElectron_dzSig",        "h_LowPtElectron_dzSig",        50,      0,  5.0)
     
     # loop over events
     for i in range(n_events):
