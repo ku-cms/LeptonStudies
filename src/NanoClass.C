@@ -41,7 +41,8 @@ std::string NanoClass::GetLabel(std::string variable)
 
 void NanoClass::SetupHist(TH1F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width)
 {
-    hist.SetStats(kFALSE);
+    //hist.SetStats(kFALSE);
+    hist.SetStats(kTRUE);
     
     TAxis* x_axis = hist.GetXaxis();
     TAxis* y_axis = hist.GetYaxis();
@@ -106,6 +107,7 @@ void NanoClass::Loop()
     // by  b_branchname->GetEntry(ientry); //read only this branch
     
     gROOT->SetBatch(kTRUE);
+    gStyle->SetOptStat(111111);
     
     if (fChain == 0)
     {
@@ -114,9 +116,9 @@ void NanoClass::Loop()
 
     std::string plot_dir = "macro_plots";
     // T2-4bd
-    //std::string sample = "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490";
+    std::string sample = "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490";
     // TTJets_DiLept
-    std::string sample = "TTJets_DiLept";
+    //std::string sample = "TTJets_DiLept";
     printf("Running over %s\n", sample.c_str());
 
     Long64_t nentries = fChain->GetEntriesFast();

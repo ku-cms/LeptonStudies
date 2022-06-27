@@ -3303,17 +3303,15 @@ NanoClass::NanoClass(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("4153AE9C-1215-A847-8E0A-DEBE98140664.root");
       // T2-4bd
-      //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root");
       // TTJets_DiLept
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/5457F199-A129-2A40-8127-733D51A9A3E6.root");
+      //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/5457F199-A129-2A40-8127-733D51A9A3E6.root");
       if (!f || !f->IsOpen()) {
-         //f = new TFile("4153AE9C-1215-A847-8E0A-DEBE98140664.root");
          // T2-4bd
-         //f = new TFile("SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root");
+         f = new TFile("SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root");
          // TTJets_DiLept
-         f = new TFile("TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/5457F199-A129-2A40-8127-733D51A9A3E6.root");
+         //f = new TFile("TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/5457F199-A129-2A40-8127-733D51A9A3E6.root");
       }
       f->GetObject("Events",tree);
 
