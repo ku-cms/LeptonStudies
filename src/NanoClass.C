@@ -23,6 +23,9 @@ std::string NanoClass::GetLabel(std::string variable)
         {"dxy",         "d_{xy}"},
         {"dxyErr",      "d_{xy} err"},
         {"dxySig",      "d_{xy} sig"},
+        {"dz",          "d_{z}"},
+        {"dzErr",       "d_{z} err"},
+        {"dzSig",       "d_{z} sig"},
     };
     std::string label = "";
     // check if variable exists in labels
@@ -139,6 +142,9 @@ void NanoClass::Loop()
     TH1F h_LowPtElectron_dxy         = TH1F("h_LowPtElectron_dxy",          "h_LowPtElectron_dxy",          50,  -0.02,  0.02);
     TH1F h_LowPtElectron_dxyErr      = TH1F("h_LowPtElectron_dxyErr",       "h_LowPtElectron_dxyErr",       50,      0,  0.1);
     TH1F h_LowPtElectron_dxySig      = TH1F("h_LowPtElectron_dxySig",       "h_LowPtElectron_dxySig",       50,      0,  5.0);
+    TH1F h_LowPtElectron_dz          = TH1F("h_LowPtElectron_dz",           "h_LowPtElectron_dz",           50,  -0.02,  0.02);
+    TH1F h_LowPtElectron_dzErr       = TH1F("h_LowPtElectron_dzErr",        "h_LowPtElectron_dzErr",        50,      0,  0.1);
+    TH1F h_LowPtElectron_dzSig       = TH1F("h_LowPtElectron_dzSig",        "h_LowPtElectron_dzSig",        50,      0,  5.0);
     // LowPtElectron_genPartFlav == 0
     TH1F h_LowPtElectron_dxy_genPartFlav0       = TH1F("h_LowPtElectron_dxy_genPartFlav0",      "h_LowPtElectron_dxy_genPartFlav0",     50,  -0.02,  0.02);
     TH1F h_LowPtElectron_dxyErr_genPartFlav0    = TH1F("h_LowPtElectron_dxyErr_genPartFlav0",   "h_LowPtElectron_dxyErr_genPartFlav0",  50,      0,  0.1);
@@ -168,10 +174,15 @@ void NanoClass::Loop()
         for (int k = 0; k < nLowPtElectron; ++k)
         {
             float dxySig = -999;
+            float dzSig  = -999;
             // avoid dividing by 0
             if (LowPtElectron_dxyErr[k] != 0)
             {
                 dxySig = abs(LowPtElectron_dxy[k] / LowPtElectron_dxyErr[k]);
+            }
+            if (LowPtElectron_dzErr[k] != 0)
+            {
+                dzSig = abs(LowPtElectron_dz[k] / LowPtElectron_dzErr[k]);
             }
             // fill histograms
             h_LowPtElectron_pt.Fill(LowPtElectron_pt[k]);
@@ -182,6 +193,9 @@ void NanoClass::Loop()
             h_LowPtElectron_dxy.Fill(LowPtElectron_dxy[k]);
             h_LowPtElectron_dxyErr.Fill(LowPtElectron_dxyErr[k]);
             h_LowPtElectron_dxySig.Fill(dxySig);
+            h_LowPtElectron_dz.Fill(LowPtElectron_dz[k]);
+            h_LowPtElectron_dzErr.Fill(LowPtElectron_dzErr[k]);
+            h_LowPtElectron_dzSig.Fill(dzSig);
             // LowPtElectron_genPartFlav == 0
             if (LowPtElectron_genPartFlav[k] == 0)
             {
@@ -215,6 +229,9 @@ void NanoClass::Loop()
     PlotHist(h_LowPtElectron_dxy,           sample, plot_dir, "h_LowPtElectron_dxy",            "dxy");
     PlotHist(h_LowPtElectron_dxyErr,        sample, plot_dir, "h_LowPtElectron_dxyErr",         "dxyErr");
     PlotHist(h_LowPtElectron_dxySig,        sample, plot_dir, "h_LowPtElectron_dxySig",         "dxySig");
+    PlotHist(h_LowPtElectron_dz,            sample, plot_dir, "h_LowPtElectron_dz",             "dz");
+    PlotHist(h_LowPtElectron_dzErr,         sample, plot_dir, "h_LowPtElectron_dzErr",          "dzErr");
+    PlotHist(h_LowPtElectron_dzSig,         sample, plot_dir, "h_LowPtElectron_dzSig",          "dzSig");
     // LowPtElectron_genPartFlav == 0
     PlotHist(h_LowPtElectron_dxy_genPartFlav0,      sample, plot_dir, "h_LowPtElectron_dxy_genPartFlav0",       "dxy");
     PlotHist(h_LowPtElectron_dxyErr_genPartFlav0,   sample, plot_dir, "h_LowPtElectron_dxyErr_genPartFlav0",    "dxyErr");
