@@ -29,14 +29,15 @@ std::string NanoClass::GetLabel(std::string variable)
     if (labels.find(variable) == labels.end())
     {
         // variable does not exist
-        printf("ERROR: the variable '%s' does not exist in labels.\n", variable.c_str());
+        printf("WARNING: the variable '%s' does not exist in labels; using '%s' for label.\n", variable.c_str(), variable.c_str());
+        label = variable;
     }
     else
     {
         // variable exists
         label = labels[variable];
     }
-    return labels[variable];
+    return label;
 }
 
 void NanoClass::SetupHist(TH1F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width)
