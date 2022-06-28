@@ -149,14 +149,23 @@ void NanoClass::Loop()
     TH1F h_LowPtElectron_dxy_genPartFlav0       = TH1F("h_LowPtElectron_dxy_genPartFlav0",      "h_LowPtElectron_dxy_genPartFlav0",     50,  -0.02,  0.02);
     TH1F h_LowPtElectron_dxyErr_genPartFlav0    = TH1F("h_LowPtElectron_dxyErr_genPartFlav0",   "h_LowPtElectron_dxyErr_genPartFlav0",  50,      0,  0.1);
     TH1F h_LowPtElectron_dxySig_genPartFlav0    = TH1F("h_LowPtElectron_dxySig_genPartFlav0",   "h_LowPtElectron_dxySig_genPartFlav0",  50,      0,  5.0);
+    TH1F h_LowPtElectron_dz_genPartFlav0        = TH1F("h_LowPtElectron_dz_genPartFlav0",       "h_LowPtElectron_dz_genPartFlav0",      50,  -0.02,  0.02);
+    TH1F h_LowPtElectron_dzErr_genPartFlav0     = TH1F("h_LowPtElectron_dzErr_genPartFlav0",    "h_LowPtElectron_dzErr_genPartFlav0",   50,      0,  0.1);
+    TH1F h_LowPtElectron_dzSig_genPartFlav0     = TH1F("h_LowPtElectron_dzSig_genPartFlav0",    "h_LowPtElectron_dzSig_genPartFlav0",   50,      0,  5.0);
     // LowPtElectron_genPartFlav == 1
     TH1F h_LowPtElectron_dxy_genPartFlav1       = TH1F("h_LowPtElectron_dxy_genPartFlav1",      "h_LowPtElectron_dxy_genPartFlav1",     50,  -0.02,  0.02);
     TH1F h_LowPtElectron_dxyErr_genPartFlav1    = TH1F("h_LowPtElectron_dxyErr_genPartFlav1",   "h_LowPtElectron_dxyErr_genPartFlav1",  50,      0,  0.1);
     TH1F h_LowPtElectron_dxySig_genPartFlav1    = TH1F("h_LowPtElectron_dxySig_genPartFlav1",   "h_LowPtElectron_dxySig_genPartFlav1",  50,      0,  5.0);
+    TH1F h_LowPtElectron_dz_genPartFlav1        = TH1F("h_LowPtElectron_dz_genPartFlav1",       "h_LowPtElectron_dz_genPartFlav1",      50,  -0.02,  0.02);
+    TH1F h_LowPtElectron_dzErr_genPartFlav1     = TH1F("h_LowPtElectron_dzErr_genPartFlav1",    "h_LowPtElectron_dzErr_genPartFlav1",   50,      0,  0.1);
+    TH1F h_LowPtElectron_dzSig_genPartFlav1     = TH1F("h_LowPtElectron_dzSig_genPartFlav1",    "h_LowPtElectron_dzSig_genPartFlav1",   50,      0,  5.0);
     // LowPtElectron_genPartFlav == 5
     TH1F h_LowPtElectron_dxy_genPartFlav5       = TH1F("h_LowPtElectron_dxy_genPartFlav5",      "h_LowPtElectron_dxy_genPartFlav5",     50,  -0.02,  0.02);
     TH1F h_LowPtElectron_dxyErr_genPartFlav5    = TH1F("h_LowPtElectron_dxyErr_genPartFlav5",   "h_LowPtElectron_dxyErr_genPartFlav5",  50,      0,  0.1);
     TH1F h_LowPtElectron_dxySig_genPartFlav5    = TH1F("h_LowPtElectron_dxySig_genPartFlav5",   "h_LowPtElectron_dxySig_genPartFlav5",  50,      0,  5.0);
+    TH1F h_LowPtElectron_dz_genPartFlav5        = TH1F("h_LowPtElectron_dz_genPartFlav5",       "h_LowPtElectron_dz_genPartFlav5",      50,  -0.02,  0.02);
+    TH1F h_LowPtElectron_dzErr_genPartFlav5     = TH1F("h_LowPtElectron_dzErr_genPartFlav5",    "h_LowPtElectron_dzErr_genPartFlav5",   50,      0,  0.1);
+    TH1F h_LowPtElectron_dzSig_genPartFlav5     = TH1F("h_LowPtElectron_dzSig_genPartFlav5",    "h_LowPtElectron_dzSig_genPartFlav5",   50,      0,  5.0);
     
     for (Long64_t jentry=0; jentry<nentries;jentry++) {
         Long64_t ientry = LoadTree(jentry);
@@ -202,6 +211,9 @@ void NanoClass::Loop()
                 h_LowPtElectron_dxy_genPartFlav0.Fill(LowPtElectron_dxy[k]);
                 h_LowPtElectron_dxyErr_genPartFlav0.Fill(LowPtElectron_dxyErr[k]);
                 h_LowPtElectron_dxySig_genPartFlav0.Fill(dxySig);
+                h_LowPtElectron_dz_genPartFlav0.Fill(LowPtElectron_dz[k]);
+                h_LowPtElectron_dzErr_genPartFlav0.Fill(LowPtElectron_dzErr[k]);
+                h_LowPtElectron_dzSig_genPartFlav0.Fill(dzSig);
             }
             // LowPtElectron_genPartFlav == 1
             if (LowPtElectron_genPartFlav[k] == 1)
@@ -209,6 +221,9 @@ void NanoClass::Loop()
                 h_LowPtElectron_dxy_genPartFlav1.Fill(LowPtElectron_dxy[k]);
                 h_LowPtElectron_dxyErr_genPartFlav1.Fill(LowPtElectron_dxyErr[k]);
                 h_LowPtElectron_dxySig_genPartFlav1.Fill(dxySig);
+                h_LowPtElectron_dz_genPartFlav1.Fill(LowPtElectron_dz[k]);
+                h_LowPtElectron_dzErr_genPartFlav1.Fill(LowPtElectron_dzErr[k]);
+                h_LowPtElectron_dzSig_genPartFlav1.Fill(dzSig);
             }
             // LowPtElectron_genPartFlav == 5
             if (LowPtElectron_genPartFlav[k] == 5)
@@ -216,6 +231,9 @@ void NanoClass::Loop()
                 h_LowPtElectron_dxy_genPartFlav5.Fill(LowPtElectron_dxy[k]);
                 h_LowPtElectron_dxyErr_genPartFlav5.Fill(LowPtElectron_dxyErr[k]);
                 h_LowPtElectron_dxySig_genPartFlav5.Fill(dxySig);
+                h_LowPtElectron_dz_genPartFlav5.Fill(LowPtElectron_dz[k]);
+                h_LowPtElectron_dzErr_genPartFlav5.Fill(LowPtElectron_dzErr[k]);
+                h_LowPtElectron_dzSig_genPartFlav5.Fill(dzSig);
             }
         }
     }
@@ -236,12 +254,21 @@ void NanoClass::Loop()
     PlotHist(h_LowPtElectron_dxy_genPartFlav0,      sample, plot_dir, "h_LowPtElectron_dxy_genPartFlav0",       "dxy");
     PlotHist(h_LowPtElectron_dxyErr_genPartFlav0,   sample, plot_dir, "h_LowPtElectron_dxyErr_genPartFlav0",    "dxyErr");
     PlotHist(h_LowPtElectron_dxySig_genPartFlav0,   sample, plot_dir, "h_LowPtElectron_dxySig_genPartFlav0",    "dxySig");
+    PlotHist(h_LowPtElectron_dz_genPartFlav0,       sample, plot_dir, "h_LowPtElectron_dz_genPartFlav0",        "dz");
+    PlotHist(h_LowPtElectron_dzErr_genPartFlav0,    sample, plot_dir, "h_LowPtElectron_dzErr_genPartFlav0",     "dzErr");
+    PlotHist(h_LowPtElectron_dzSig_genPartFlav0,    sample, plot_dir, "h_LowPtElectron_dzSig_genPartFlav0",     "dzSig");
     // LowPtElectron_genPartFlav == 1
     PlotHist(h_LowPtElectron_dxy_genPartFlav1,      sample, plot_dir, "h_LowPtElectron_dxy_genPartFlav1",       "dxy");
     PlotHist(h_LowPtElectron_dxyErr_genPartFlav1,   sample, plot_dir, "h_LowPtElectron_dxyErr_genPartFlav1",    "dxyErr");
     PlotHist(h_LowPtElectron_dxySig_genPartFlav1,   sample, plot_dir, "h_LowPtElectron_dxySig_genPartFlav1",    "dxySig");
+    PlotHist(h_LowPtElectron_dz_genPartFlav1,       sample, plot_dir, "h_LowPtElectron_dz_genPartFlav1",        "dz");
+    PlotHist(h_LowPtElectron_dzErr_genPartFlav1,    sample, plot_dir, "h_LowPtElectron_dzErr_genPartFlav1",     "dzErr");
+    PlotHist(h_LowPtElectron_dzSig_genPartFlav1,    sample, plot_dir, "h_LowPtElectron_dzSig_genPartFlav1",     "dzSig");
     // LowPtElectron_genPartFlav == 5
     PlotHist(h_LowPtElectron_dxy_genPartFlav5,      sample, plot_dir, "h_LowPtElectron_dxy_genPartFlav5",       "dxy");
     PlotHist(h_LowPtElectron_dxyErr_genPartFlav5,   sample, plot_dir, "h_LowPtElectron_dxyErr_genPartFlav5",    "dxyErr");
     PlotHist(h_LowPtElectron_dxySig_genPartFlav5,   sample, plot_dir, "h_LowPtElectron_dxySig_genPartFlav5",    "dxySig");
+    PlotHist(h_LowPtElectron_dz_genPartFlav5,       sample, plot_dir, "h_LowPtElectron_dz_genPartFlav5",        "dz");
+    PlotHist(h_LowPtElectron_dzErr_genPartFlav5,    sample, plot_dir, "h_LowPtElectron_dzErr_genPartFlav5",     "dzErr");
+    PlotHist(h_LowPtElectron_dzSig_genPartFlav5,    sample, plot_dir, "h_LowPtElectron_dzSig_genPartFlav5",     "dzSig");
 }
