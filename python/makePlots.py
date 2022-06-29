@@ -12,6 +12,8 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # Tell ROOT not to be in charge of memory, fix issue of histograms being deleted when ROOT file is closed:
 ROOT.TH1.AddDirectory(False)
 
+# TODO: Debug and fix LowPtElectron_genPartFlav: type is UChar_t.
+
 # get label based on a key
 def getLabel(key):
     labels = {
@@ -38,6 +40,25 @@ def getLabel(key):
         # key does not exist
         print("ERROR: the key '{0}' does not exist in labels.".format(key))
     return label
+
+# get IP = IP_3D = DR_3D
+def getIP(dxy, dz):
+    return np.sqrt(dxy ** 2 + dz ** 2)
+
+# TODO: fix with correct error propagation
+# get IP error
+def getIPErr(sig_xy, sig_z):
+    return np.sqrt(sig_xy ** 2 + sig_z ** 2)
+
+# get significance
+def getSig(value, value_error):
+    result = -999
+    # avoid dividing by 0
+    if value_error == 0:
+        print("ERROR: In getSig(), value = {0}; will return {1}".format(value_error, result))
+    else:
+        result = abs(value / value_error)
+    return result
 
 # plot a histogram
 def plotHist(hist, sample_name, plot_dir, plot_name, variable):
@@ -110,41 +131,15 @@ def run(plot_dir, sample_name, tree):
             
         # fill histograms (per event)
         h_nLowPtElectron.Fill(nLowPtElectron)
-
-        #LowPtElectron_genPartIdx[5];   //[nLowPtElectron]
-        #LowPtElectron_genPartFlav[5];   //[nLowPtElectron]
-
-        #print("LowPtElectron_genPartFlav object:")
-        #print(LowPtElectron_genPartFlav)
         
         # loop over LowPtElectron
         for j in range(nLowPtElectron):
-            dxySig = -999
-            dzSig  = -999
-            # avoid dividing by 0
-            if LowPtElectron_dxyErr[j] != 0:
-                dxySig = abs(LowPtElectron_dxy[j] / LowPtElectron_dxyErr[j])
-            if LowPtElectron_dzErr[j] != 0:
-                dzSig = abs(LowPtElectron_dz[j] / LowPtElectron_dzErr[j])
+            # get significance
+            dxySig = getSig(LowPtElectron_dxy[j], LowPtElectron_dxyErr[j])
+            dzSig  = getSig(LowPtElectron_dz[j],  LowPtElectron_dzErr[j])
+            
             if verbose:
                 print("LowPtElectron {0}: pt = {1:.3f}, eta = {2:.3f}, phi = {3:.3f}, mass = {4:.3f}".format(j, LowPtElectron_pt[j], LowPtElectron_eta[j], LowPtElectron_phi[j], LowPtElectron_mass[j]))
-            
-            # Debug LowPtElectron_genPartFlav:
-            # 
-            #print("LowPtElectron_genPartFlav Type: {0}".format(type(LowPtElectron_genPartFlav[j])))
-            #if LowPtElectron_genPartFlav[j] == "":
-            #    print("BLANK STRING")
-            #else:
-            #    print("NOT BLANK STRING")
-            #
-            #if LowPtElectron_genPartFlav[j] == "\0":
-            #    print("NULL STRING")
-            #else:
-            #    print("NOT NULL STRING")
-            
-            #if LowPtElectron_genPartFlav[j]: 
-            #    print("LowPtElectron {0}: LowPtElectron_genPartFlav = {1}".format(j, LowPtElectron_genPartFlav[j]))
-            #    #print("LowPtElectron {0}: LowPtElectron_genPartFlav = {1}".format(j, int(LowPtElectron_genPartFlav[j])))
             
             # fill histograms (per LowPtElectron)
             h_LowPtElectron_pt.Fill(LowPtElectron_pt[j])
@@ -177,7 +172,6 @@ def run(plot_dir, sample_name, tree):
 
 # run over input file
 def makePlots():
-    
     plot_dir    = "plots"
     
     # map sample names to input files
