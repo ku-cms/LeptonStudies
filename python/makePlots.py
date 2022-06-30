@@ -12,7 +12,10 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # Tell ROOT not to be in charge of memory, fix issue of histograms being deleted when ROOT file is closed:
 ROOT.TH1.AddDirectory(False)
 
-# TODO: Debug and fix LowPtElectron_genPartFlav: type is UChar_t.
+# TODO:
+# - Debug and fix LowPtElectron_genPartFlav: type is UChar_t.
+# - 1D plots: IP, IPErr, IPSig, ID, embedded ID
+# - 2D plots: ID vs. genPartFlav, embedded ID vs. genPartFlav
 
 # get label based on a key
 def getLabel(key):
