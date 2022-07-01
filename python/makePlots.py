@@ -15,7 +15,7 @@ ROOT.TH1.AddDirectory(False)
 # TODO:
 # - Debug and fix LowPtElectron_genPartFlav: type is UChar_t.
 # - 1D plots: IP, IPErr, IPSig, ID, embedded ID
-# - 2D plots: ID vs. genPartFlav, embedded ID vs. genPartFlav
+# - 2D plots: ID vs. genPartFlav, embedded ID vs. genPartFlav, dxy vs. genPartFlav, dz vs. genPartFlav
 
 # get label based on a key
 def getLabel(key):
@@ -33,6 +33,8 @@ def getLabel(key):
         "dz"            : "d_{z}",
         "dzErr"         : "d_{z} err",
         "dzSig"         : "d_{z} sig",
+        "ID"            : "ID",
+        "embeddedID"    : "embeddedID",
     }
     label = ""
     # check if key exists in labels
@@ -109,6 +111,8 @@ def run(plot_dir, sample_name, tree):
     h_LowPtElectron_dz          = ROOT.TH1F("h_LowPtElectron_dz",           "h_LowPtElectron_dz",           50,  -0.02,  0.02)
     h_LowPtElectron_dzErr       = ROOT.TH1F("h_LowPtElectron_dzErr",        "h_LowPtElectron_dzErr",        50,      0,  0.1)
     h_LowPtElectron_dzSig       = ROOT.TH1F("h_LowPtElectron_dzSig",        "h_LowPtElectron_dzSig",        50,      0,  5.0)
+    h_LowPtElectron_ID          = ROOT.TH1F("h_LowPtElectron_ID",           "h_LowPtElectron_ID",           50,     -5,  20)
+    h_LowPtElectron_embeddedID  = ROOT.TH1F("h_LowPtElectron_embeddedID",   "h_LowPtElectron_embeddedID",   50,     -5,  20)
     
     # loop over events
     for i in range(n_events):
@@ -131,6 +135,8 @@ def run(plot_dir, sample_name, tree):
         LowPtElectron_dxyErr        = tree.LowPtElectron_dxyErr
         LowPtElectron_dz            = tree.LowPtElectron_dz
         LowPtElectron_dzErr         = tree.LowPtElectron_dzErr
+        LowPtElectron_ID            = tree.LowPtElectron_ID
+        LowPtElectron_embeddedID    = tree.LowPtElectron_embeddedID
             
         # fill histograms (per event)
         h_nLowPtElectron.Fill(nLowPtElectron)
@@ -157,6 +163,8 @@ def run(plot_dir, sample_name, tree):
             h_LowPtElectron_dz.Fill(LowPtElectron_dz[j])
             h_LowPtElectron_dzErr.Fill(LowPtElectron_dzErr[j])
             h_LowPtElectron_dzSig.Fill(dzSig)
+            h_LowPtElectron_ID.Fill(LowPtElectron_ID[j])
+            h_LowPtElectron_embeddedID.Fill(LowPtElectron_embeddedID[j])
     
     # plot histograms
     plotHist(h_nLowPtElectron,              sample_name, plot_dir, "nLowPtElectron",            "nElectrons")
@@ -172,6 +180,8 @@ def run(plot_dir, sample_name, tree):
     plotHist(h_LowPtElectron_dz,            sample_name, plot_dir, "LowPtElectron_dz",          "dz")
     plotHist(h_LowPtElectron_dzErr,         sample_name, plot_dir, "LowPtElectron_dzErr",       "dzErr")
     plotHist(h_LowPtElectron_dzSig,         sample_name, plot_dir, "LowPtElectron_dzSig",       "dzSig")
+    plotHist(h_LowPtElectron_ID,            sample_name, plot_dir, "LowPtElectron_ID",          "ID")
+    plotHist(h_LowPtElectron_embeddedID,    sample_name, plot_dir, "LowPtElectron_embeddedID",  "embeddedID")
 
 # run over input file
 def makePlots():
