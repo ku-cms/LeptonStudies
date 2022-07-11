@@ -11,11 +11,16 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 # Tell ROOT not to be in charge of memory, fix issue of histograms being deleted when ROOT file is closed:
 ROOT.TH1.AddDirectory(False)
+# Stat box    
+ROOT.gStyle.SetOptStat(111111)
 
 # TODO:
 # - Debug and fix LowPtElectron_genPartFlav: type is UChar_t.
-# - 1D plots: IP, IPErr, IPSig, ID, embedded ID
+# - Fix IPErr: use correct error propagation
+# - 1D plots: IP, IPErr, IPSig
 # - 2D plots: ID vs. genPartFlav, embedded ID vs. genPartFlav, dxy vs. genPartFlav, dz vs. genPartFlav
+# DONE:
+# - 1D plots: ID, embedded ID
 
 # get label based on a key
 def getLabel(key):
@@ -34,7 +39,7 @@ def getLabel(key):
         "dzErr"         : "d_{z} err",
         "dzSig"         : "d_{z} sig",
         "ID"            : "ID",
-        "embeddedID"    : "embeddedID",
+        "embeddedID"    : "embedded ID",
     }
     label = ""
     # check if key exists in labels
@@ -111,8 +116,8 @@ def run(plot_dir, sample_name, tree):
     h_LowPtElectron_dz          = ROOT.TH1F("h_LowPtElectron_dz",           "h_LowPtElectron_dz",           50,  -0.02,  0.02)
     h_LowPtElectron_dzErr       = ROOT.TH1F("h_LowPtElectron_dzErr",        "h_LowPtElectron_dzErr",        50,      0,  0.1)
     h_LowPtElectron_dzSig       = ROOT.TH1F("h_LowPtElectron_dzSig",        "h_LowPtElectron_dzSig",        50,      0,  5.0)
-    h_LowPtElectron_ID          = ROOT.TH1F("h_LowPtElectron_ID",           "h_LowPtElectron_ID",           50,     -5,  20)
-    h_LowPtElectron_embeddedID  = ROOT.TH1F("h_LowPtElectron_embeddedID",   "h_LowPtElectron_embeddedID",   50,     -5,  20)
+    h_LowPtElectron_ID          = ROOT.TH1F("h_LowPtElectron_ID",           "h_LowPtElectron_ID",           50,     -1,  15)
+    h_LowPtElectron_embeddedID  = ROOT.TH1F("h_LowPtElectron_embeddedID",   "h_LowPtElectron_embeddedID",   50,     -1,  15)
     
     # loop over events
     for i in range(n_events):

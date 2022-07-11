@@ -19,7 +19,8 @@ def getTree(open_file, tree_name):
     return tree
 
 def setupHist(hist, title, x_title, y_title, y_min, y_max, color, lineWidth):
-    hist.SetStats(ROOT.kFALSE)
+    #hist.SetStats(ROOT.kFALSE)
+    hist.SetStats(ROOT.kTRUE)
     
     x_axis = hist.GetXaxis()
     y_axis = hist.GetYaxis()
