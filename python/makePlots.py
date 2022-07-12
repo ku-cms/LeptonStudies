@@ -18,12 +18,14 @@ ROOT.gStyle.SetOptStat(111111)
 # - Debug and fix LowPtElectron_genPartFlav: type is UChar_t.
 # - Fix IPErr: use correct error propagation
 # - 1D plots: IP, IPErr, IPSig
+# - 1D plots: ID, embedded ID with genPartFlav selection
 # - 2D plots: ID vs. genPartFlav, embedded ID vs. genPartFlav, dxy vs. genPartFlav, dz vs. genPartFlav
 # DONE:
 # - 1D plots: ID, embedded ID
 
-# get label based on a key
-def getLabel(key):
+# get label for variable
+def getLabel(variable):
+    # labels for variables
     labels = {
         "nElectrons"    : "n_{e}",
         "pt"            : "p_{T} [GeV]",
@@ -41,14 +43,16 @@ def getLabel(key):
         "ID"            : "ID",
         "embeddedID"    : "embedded ID",
     }
+
     label = ""
-    # check if key exists in labels
-    if key in labels:
-        # key exists
-        label = labels[key]
+    # check if variable exists in labels
+    if variable in labels:
+        # variable exists
+        label = labels[variable]
     else:
-        # key does not exist
-        print("ERROR: the key '{0}' does not exist in labels.".format(key))
+        # variable does not exist
+        print("WARNING: the variable {0} does not exist in labels; using {1} for label.".format(variable, variable))
+        label = variable
     return label
 
 # get IP = IP_3D = DR_3D
@@ -108,16 +112,16 @@ def run(plot_dir, sample_name, tree):
     h_LowPtElectron_eta         = ROOT.TH1F("h_LowPtElectron_eta",          "h_LowPtElectron_eta",          20,   -3.0,  3.0)
     h_LowPtElectron_phi         = ROOT.TH1F("h_LowPtElectron_phi",          "h_LowPtElectron_phi",          20, -np.pi,  np.pi)
     h_LowPtElectron_mass        = ROOT.TH1F("h_LowPtElectron_mass",         "h_LowPtElectron_mass",         20,  -0.01,  0.01)
-    h_LowPtElectron_genPartIdx  = ROOT.TH1F("h_LowPtElectron_genPartIdx",   "h_LowPtElectron_genPartIdx",   20,      0,  100)
-    #h_LowPtElectron_genPartFlav = ROOT.TH1F("h_LowPtElectron_genPartFlav",  "h_LowPtElectron_genPartFlav",  30,      0,  30)
+    h_LowPtElectron_genPartIdx  = ROOT.TH1F("h_LowPtElectron_genPartIdx",   "h_LowPtElectron_genPartIdx",   20,    0.0,  100.0)
+    #h_LowPtElectron_genPartFlav = ROOT.TH1F("h_LowPtElectron_genPartFlav",  "h_LowPtElectron_genPartFlav",  30,      0.0,  30.0)
     h_LowPtElectron_dxy         = ROOT.TH1F("h_LowPtElectron_dxy",          "h_LowPtElectron_dxy",          50,  -0.02,  0.02)
-    h_LowPtElectron_dxyErr      = ROOT.TH1F("h_LowPtElectron_dxyErr",       "h_LowPtElectron_dxyErr",       50,      0,  0.1)
-    h_LowPtElectron_dxySig      = ROOT.TH1F("h_LowPtElectron_dxySig",       "h_LowPtElectron_dxySig",       50,      0,  5.0)
+    h_LowPtElectron_dxyErr      = ROOT.TH1F("h_LowPtElectron_dxyErr",       "h_LowPtElectron_dxyErr",       50,    0.0,  0.1)
+    h_LowPtElectron_dxySig      = ROOT.TH1F("h_LowPtElectron_dxySig",       "h_LowPtElectron_dxySig",       50,    0.0,  5.0)
     h_LowPtElectron_dz          = ROOT.TH1F("h_LowPtElectron_dz",           "h_LowPtElectron_dz",           50,  -0.02,  0.02)
-    h_LowPtElectron_dzErr       = ROOT.TH1F("h_LowPtElectron_dzErr",        "h_LowPtElectron_dzErr",        50,      0,  0.1)
-    h_LowPtElectron_dzSig       = ROOT.TH1F("h_LowPtElectron_dzSig",        "h_LowPtElectron_dzSig",        50,      0,  5.0)
-    h_LowPtElectron_ID          = ROOT.TH1F("h_LowPtElectron_ID",           "h_LowPtElectron_ID",           50,     -1,  15)
-    h_LowPtElectron_embeddedID  = ROOT.TH1F("h_LowPtElectron_embeddedID",   "h_LowPtElectron_embeddedID",   50,     -1,  15)
+    h_LowPtElectron_dzErr       = ROOT.TH1F("h_LowPtElectron_dzErr",        "h_LowPtElectron_dzErr",        50,    0.0,  0.1)
+    h_LowPtElectron_dzSig       = ROOT.TH1F("h_LowPtElectron_dzSig",        "h_LowPtElectron_dzSig",        50,    0.0,  5.0)
+    h_LowPtElectron_ID          = ROOT.TH1F("h_LowPtElectron_ID",           "h_LowPtElectron_ID",           50,   -1.0,  15.0)
+    h_LowPtElectron_embeddedID  = ROOT.TH1F("h_LowPtElectron_embeddedID",   "h_LowPtElectron_embeddedID",   50,   -1.0,  15.0)
     
     # loop over events
     for i in range(n_events):
