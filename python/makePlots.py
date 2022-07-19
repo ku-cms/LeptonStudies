@@ -102,7 +102,7 @@ def plotHist(hist, sample_name, plot_dir, plot_name, variable):
     c.SaveAs(output_name + ".pdf")
 
 # loop over tree, fill and plot histograms
-def run(plot_dir, sample_name, tree):
+def run(plot_dir, sample_name, tree, max_event):
     verbose     = False
     n_events    = tree.GetEntries()
     
@@ -125,6 +125,9 @@ def run(plot_dir, sample_name, tree):
     
     # loop over events
     for i in range(n_events):
+        # stop if max is reached
+        if max_event > 0 and i >= max_event:
+            break
         # print event number
         if i % 1000 == 0:
             print("Event {0}".format(i))
@@ -194,12 +197,16 @@ def run(plot_dir, sample_name, tree):
 
 # run over input file
 def makePlots():
+    max_event   = 100000
     plot_dir    = "plots"
+    tools.makeDir(plot_dir)
     
     # map sample names to input files
     samples = {}
-    samples["SMS-T2-4bd_genMET-80_mStop-500_mLSP-490"]  = "/uscms/home/caleb/nobackup/KU_Compressed_SUSY/samples/SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root"
-    #samples["TTJets_DiLept"]                            = "/uscms/home/caleb/nobackup/KU_Compressed_SUSY/samples/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/5457F199-A129-2A40-8127-733D51A9A3E6.root"
+    # signal
+    #samples["SMS-T2-4bd_genMET-80_mStop-500_mLSP-490"]  = "/uscms/home/caleb/nobackup/KU_Compressed_SUSY/samples/SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root"
+    # background
+    samples["TTJets_DiLept"]                            = "/uscms/home/caleb/nobackup/KU_Compressed_SUSY/samples/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/5457F199-A129-2A40-8127-733D51A9A3E6.root"
 
     for sample in samples:
         print("Running over {0}".format(sample))
@@ -209,11 +216,21 @@ def makePlots():
         # WARNING: Make sure to open file here, not within getTree() so that TFile stays open. 
         #          If TFile closes, then TTree object is destroyed.
         tree_name   = "Events"
-        open_file   = ROOT.TFile.Open(input_file)
-        tree        = tools.getTree(open_file, tree_name)
-
-        tools.makeDir(plot_dir)
-        run(plot_dir, sample, tree)
+        
+        # load one file
+        #open_file   = ROOT.TFile.Open(input_file)
+        #tree        = tools.getTree(open_file, tree_name)
+        #run(plot_dir, sample, tree)
+        
+        # load signal files
+        #chain = ROOT.TChain(tree_name)
+        #tools.loadSignal(chain)
+        #run(plot_dir, sample, chain, max_event)
+        
+        # load background files
+        chain = ROOT.TChain(tree_name)
+        tools.loadBackground(chain)
+        run(plot_dir, sample, chain, max_event)
 
 def main():
     makePlots()
