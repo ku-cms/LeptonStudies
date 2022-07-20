@@ -197,7 +197,8 @@ def run(plot_dir, sample_name, tree, max_event):
 
 # run over input file
 def makePlots():
-    max_event   = 100000
+    #max_event   = 100000
+    max_event   = -1
     plot_dir    = "plots"
     tools.makeDir(plot_dir)
     
