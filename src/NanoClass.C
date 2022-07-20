@@ -124,14 +124,15 @@ void NanoClass::Loop()
     std::string plot_dir = "macro_plots";
     
     // T2-4bd
-    //std::string sample = "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490";
+    std::string sample = "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490";
     // TTJets_DiLept
-    std::string sample = "TTJets_DiLept";
+    //std::string sample = "TTJets_DiLept";
     
     printf("Running over %s\n", sample.c_str());
 
     Long64_t nentries = fChain->GetEntriesFast();
     Long64_t nbytes = 0, nb = 0;
+    Long64_t max_event = 20000;
 
     // Int_t           LowPtElectron_genPartIdx[5];   //[nLowPtElectron]
     // UChar_t         LowPtElectron_genPartFlav[5];   //[nLowPtElectron]
@@ -181,8 +182,16 @@ void NanoClass::Loop()
     TH1F h_LowPtElectron_embeddedID_genPartFlav5    = TH1F("h_LowPtElectron_embeddedID_genPartFlav5",   "h_LowPtElectron_embeddedID_genPartFlav5",  50,   -1.0,  15.0);
     
     for (Long64_t jentry=0; jentry<nentries;jentry++) {
+        // break if max event is reached
+        if (max_event > 0 && jentry >= max_event)
+        {
+            break;
+        }
         Long64_t ientry = LoadTree(jentry);
-        if (ientry < 0) break;
+        if (ientry < 0)
+        {
+            break;
+        } 
         nb = fChain->GetEntry(jentry);
         nbytes += nb;
         // if (Cut(ientry) < 0) continue;
