@@ -3287,6 +3287,8 @@ public :
    virtual Int_t        Cut(Long64_t entry);
    virtual Int_t        GetEntry(Long64_t entry);
    virtual Long64_t     LoadTree(Long64_t entry);
+   virtual void         LoadSignal(TChain *chain);
+   virtual void         LoadBackground(TChain *chain);
    virtual void         Init(TTree *tree);
    virtual void         Loop();
    virtual void         PlotHist(TH1F &hist, std::string sample_name, std::string plot_dir, std::string plot_name, std::string variable);
@@ -3297,6 +3299,10 @@ public :
 };
 
 #endif
+
+// TODO
+// - Test TChain on multiple files
+// - Create functions for adding signal and background files to TChain
 
 #ifdef NanoClass_cxx
 NanoClass::NanoClass(TTree *tree) : fChain(0) 
@@ -3333,7 +3339,8 @@ NanoClass::NanoClass(TTree *tree) : fChain(0)
       //printf("tree entries: %lld\n", tree->GetEntries());
    }
    myChain = new TChain("Events");
-   myChain->Add("SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root");
+   //LoadSignal(myChain);
+   LoadBackground(myChain);
    printf("myChain entries: %lld\n", myChain->GetEntries());
    
    //Init(tree);
@@ -3365,6 +3372,16 @@ Long64_t NanoClass::LoadTree(Long64_t entry)
       Notify();
    }
    return centry;
+}
+
+void NanoClass::LoadSignal(TChain *chain)
+{
+    chain->Add("SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root");
+}
+
+void NanoClass::LoadBackground(TChain *chain)
+{
+    chain->Add("TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/5457F199-A129-2A40-8127-733D51A9A3E6.root");
 }
 
 void NanoClass::Init(TTree *tree)

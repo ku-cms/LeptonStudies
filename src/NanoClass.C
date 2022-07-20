@@ -122,10 +122,12 @@ void NanoClass::Loop()
     }
 
     std::string plot_dir = "macro_plots";
+    
     // T2-4bd
-    std::string sample = "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490";
+    //std::string sample = "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490";
     // TTJets_DiLept
-    //std::string sample = "TTJets_DiLept";
+    std::string sample = "TTJets_DiLept";
+    
     printf("Running over %s\n", sample.c_str());
 
     Long64_t nentries = fChain->GetEntriesFast();
