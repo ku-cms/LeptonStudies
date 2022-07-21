@@ -15,11 +15,9 @@ ROOT.TH1.AddDirectory(False)
 ROOT.gStyle.SetOptStat(111111)
 
 # TODO:
-# - Debug and fix LowPtElectron_genPartFlav: type is UChar_t.
-# - Fix IPErr: use correct error propagation
 # - 1D plots: IP, IPErr, IPSig
-# - 1D plots: ID, embedded ID with genPartFlav selection
-# - 2D plots: ID vs. genPartFlav, embedded ID vs. genPartFlav, dxy vs. genPartFlav, dz vs. genPartFlav
+# - Fix IPErr: use correct error propagation
+# - Debug and fix LowPtElectron_genPartFlav: type is UChar_t.
 # DONE:
 # - 1D plots: ID, embedded ID
 
