@@ -197,16 +197,17 @@ def run(plot_dir, sample_name, tree, max_event):
 
 # run over input file
 def makePlots():
-    max_event   = 100000
+    max_event   = 20000
+    #max_event   = -1
     plot_dir    = "plots"
     tools.makeDir(plot_dir)
     
     # map sample names to input files
     samples = {}
     # signal
-    #samples["SMS-T2-4bd_genMET-80_mStop-500_mLSP-490"]  = "/uscms/home/caleb/nobackup/KU_Compressed_SUSY/samples/SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root"
+    samples["SMS-T2-4bd_genMET-80_mStop-500_mLSP-490"]  = "/uscms/home/caleb/nobackup/KU_Compressed_SUSY/samples/SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root"
     # background
-    samples["TTJets_DiLept"]                            = "/uscms/home/caleb/nobackup/KU_Compressed_SUSY/samples/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/5457F199-A129-2A40-8127-733D51A9A3E6.root"
+    #samples["TTJets_DiLept"]                            = "/uscms/home/caleb/nobackup/KU_Compressed_SUSY/samples/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/5457F199-A129-2A40-8127-733D51A9A3E6.root"
 
     for sample in samples:
         print("Running over {0}".format(sample))
@@ -223,14 +224,14 @@ def makePlots():
         #run(plot_dir, sample, tree)
         
         # load signal files
-        #chain = ROOT.TChain(tree_name)
-        #tools.loadSignal(chain)
-        #run(plot_dir, sample, chain, max_event)
+        chain = ROOT.TChain(tree_name)
+        tools.loadSignal(chain)
+        run(plot_dir, sample, chain, max_event)
         
         # load background files
-        chain = ROOT.TChain(tree_name)
-        tools.loadBackground(chain)
-        run(plot_dir, sample, chain, max_event)
+        #chain = ROOT.TChain(tree_name)
+        #tools.loadBackground(chain)
+        #run(plot_dir, sample, chain, max_event)
 
 def main():
     makePlots()
