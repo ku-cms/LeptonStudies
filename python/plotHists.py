@@ -88,6 +88,10 @@ def run(sample, input_file, plot_dir):
 # create plots from hists saved in ROOT files
 def plotHists():
     plot_dir    = "hist_plots"
+    #samples = {
+    #    "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490"   : "src/output/SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_v1.root",
+    #    "TTJets_DiLept"                             : "src/output/TTJets_DiLept_v1.root",
+    #}
     samples = {
         "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490"   : "src/output/SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_v2.root",
         "TTJets_DiLept"                             : "src/output/TTJets_DiLept_v2.root",
