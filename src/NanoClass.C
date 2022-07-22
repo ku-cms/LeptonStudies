@@ -4,6 +4,7 @@
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+#include <TFile.h>
 #include <string>
 #include <cmath>
 #include <map>
@@ -152,7 +153,7 @@ void NanoClass::Loop()
     //    fChain->SetBranchStatus("branchname",1);  // activate branchname
     // METHOD2: replace line
     //    fChain->GetEntry(jentry);       //read all branches
-    // by  b_branchname->GetEntry(ientry); //read only this branch
+    // by b_branchname->GetEntry(ientry); //read only this branch
     
     gROOT->SetBatch(kTRUE);
     gStyle->SetOptStat(111111);
@@ -162,12 +163,17 @@ void NanoClass::Loop()
         return;
     }
 
-    std::string plot_dir = "macro_plots";
+    std::string plot_dir    = "macro_plots";
+    std::string output_dir  = "output";
     
     // T2-4bd
     std::string sample = "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490";
     // TTJets_DiLept
     //std::string sample = "TTJets_DiLept";
+
+    // output file
+    std::string output_file = output_dir + "/" + sample + ".root";
+    TFile f = TFile(output_file.c_str(), "RECREATE");
     
     printf("Running over %s\n", sample.c_str());
 
@@ -365,4 +371,7 @@ void NanoClass::Loop()
     PlotHist(h_LowPtElectron_dzSig_genPartFlav5,        sample, plot_dir, "h_LowPtElectron_dzSig_genPartFlav5",         "dzSig");
     PlotHist(h_LowPtElectron_ID_genPartFlav5,           sample, plot_dir, "h_LowPtElectron_ID_genPartFlav5",            "ID");
     PlotHist(h_LowPtElectron_embeddedID_genPartFlav5,   sample, plot_dir, "h_LowPtElectron_embeddedID_genPartFlav5",    "embeddedID");
+    
+    // Save all histograms in memory to file
+    f.Write();
 }
