@@ -3309,8 +3309,8 @@ NanoClass::NanoClass(TTree *tree) : fChain(0)
    if (useChain)
    {
       myChain = new TChain("Events");
-      LoadSignal(myChain);
-      //LoadBackground(myChain);
+      //LoadSignal(myChain);
+      LoadBackground(myChain);
       printf("myChain entries: %lld\n", myChain->GetEntries());
       Init(myChain);
       printf("Loaded ROOT files and chain.\n");

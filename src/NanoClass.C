@@ -167,9 +167,9 @@ void NanoClass::Loop()
     std::string output_dir  = "output";
     
     // T2-4bd
-    std::string sample = "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490";
+    //std::string sample = "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490";
     // TTJets_DiLept
-    //std::string sample = "TTJets_DiLept";
+    std::string sample = "TTJets_DiLept";
 
     // output file
     std::string output_file = output_dir + "/" + sample + ".root";
@@ -179,7 +179,7 @@ void NanoClass::Loop()
 
     Long64_t nentries = fChain->GetEntriesFast();
     Long64_t nbytes = 0, nb = 0;
-    Long64_t max_event = 10000;
+    Long64_t max_event = 1e6;
 
     // Int_t           LowPtElectron_genPartIdx[5];   //[nLowPtElectron]
     // UChar_t         LowPtElectron_genPartFlav[5];   //[nLowPtElectron]
