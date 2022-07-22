@@ -89,7 +89,8 @@ def plotHist(hist, sample_name, plot_dir, plot_name, variable):
     y_title     = "Entries"
     color       = "black"
     lineWidth   = 1
-    tools.setupHist(hist, title, x_title, y_title, y_min, y_max, color, lineWidth)
+    stats       = True
+    tools.setupHist(hist, title, x_title, y_title, y_min, y_max, color, lineWidth, stats)
     
     # draw
     hist.Draw("hist error same")
@@ -195,7 +196,7 @@ def run(plot_dir, sample_name, tree, max_event):
 
 # run over input file
 def makePlots():
-    max_event   = 20000
+    max_event   = 1e4
     #max_event   = -1
     plot_dir    = "plots"
     tools.makeDir(plot_dir)
