@@ -3292,7 +3292,9 @@ public :
    virtual void         Init(TTree *tree);
    virtual void         Loop();
    virtual void         PlotHist(TH1F &hist, std::string sample_name, std::string plot_dir, std::string plot_name, std::string variable);
+   virtual void         PlotHist2D(TH2F &hist, std::string sample_name, std::string plot_dir, std::string plot_name, std::string x_variable, std::string y_variable);
    virtual void         SetupHist(TH1F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width);
+   virtual void         SetupHist2D(TH2F &hist, std::string title, std::string x_title, std::string y_title);
    virtual std::string  GetLabel(std::string variable);
    virtual Bool_t       Notify();
    virtual void         Show(Long64_t entry = -1);
@@ -3307,8 +3309,8 @@ NanoClass::NanoClass(TTree *tree) : fChain(0)
    if (useChain)
    {
       myChain = new TChain("Events");
-      LoadSignal(myChain);
-      //LoadBackground(myChain);
+      //LoadSignal(myChain);
+      LoadBackground(myChain);
       printf("myChain entries: %lld\n", myChain->GetEntries());
       Init(myChain);
       printf("Loaded ROOT files and chain.\n");

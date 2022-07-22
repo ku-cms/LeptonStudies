@@ -120,19 +120,18 @@ def loadBackground(chain):
     n_events = chain.GetEntries()
     print("loadBackground(): number of events = {0}".format(n_events))
 
-def setupHist(hist, title, x_title, y_title, y_min, y_max, color, lineWidth):
-    #hist.SetStats(ROOT.kFALSE)
-    hist.SetStats(ROOT.kTRUE)
-    
+def setupHist(hist, title, x_title, y_title, y_min, y_max, color, lineWidth, stats):
+    # get x, y axis
     x_axis = hist.GetXaxis()
     y_axis = hist.GetYaxis()
-    
+    # set attributes
     hist.SetTitle(title)
     x_axis.SetTitle(x_title)
     y_axis.SetTitle(y_title)
     y_axis.SetRangeUser(y_min, y_max)
     hist.SetLineColor(colors.getColorIndex(color))
     hist.SetLineWidth(lineWidth)
+    hist.SetStats(stats)
 
 def setupLegend(legend):
     legend.SetFillStyle(0)

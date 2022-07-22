@@ -4,10 +4,16 @@
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+#include <TFile.h>
 #include <string>
 #include <cmath>
 #include <map>
 
+// TODO
+// DONE
+// - 1D plots: ID, embedded ID with genPartFlav selection
+// - 2D plots: genPartFlav vs. ID, vs. genPartFlav vs. embedded ID
+// - 2D plots: genPartFlav vs. dxy, genPartFlav vs. dz
 
 // get label for variable
 std::string NanoClass::GetLabel(std::string variable)
@@ -61,6 +67,18 @@ void NanoClass::SetupHist(TH1F &hist, std::string title, std::string x_title, st
     hist.SetLineWidth(line_width);
 }
 
+void NanoClass::SetupHist2D(TH2F &hist, std::string title, std::string x_title, std::string y_title)
+{
+    hist.SetStats(kFALSE);
+    
+    TAxis* x_axis = hist.GetXaxis();
+    TAxis* y_axis = hist.GetYaxis();
+    
+    hist.SetTitle(title.c_str());
+    x_axis->SetTitle(x_title.c_str());
+    y_axis->SetTitle(y_title.c_str());
+}
+
 void NanoClass::PlotHist(TH1F &hist, std::string sample_name, std::string plot_dir, std::string plot_name, std::string variable)
 {
     printf("Plotting %s\n", plot_name.c_str());
@@ -79,6 +97,30 @@ void NanoClass::PlotHist(TH1F &hist, std::string sample_name, std::string plot_d
 
     // draw
     hist.Draw("hist error same");
+    
+    // save plot
+    std::string output_name = plot_dir + "/" + sample_name + "_" + plot_name; 
+    std::string output_name_pdf = output_name + ".pdf";
+    c.Update();
+    c.SaveAs(output_name_pdf.c_str());
+}
+
+void NanoClass::PlotHist2D(TH2F &hist, std::string sample_name, std::string plot_dir, std::string plot_name, std::string x_variable, std::string y_variable)
+{
+    printf("Plotting %s\n", plot_name.c_str());
+    // canvas
+    TCanvas c = TCanvas("c", "c", 800, 800);
+    c.SetLeftMargin(0.15);
+    c.SetRightMargin(0.15);
+    
+    // setup histogram
+    std::string title   = plot_name;
+    std::string x_title = GetLabel(x_variable);
+    std::string y_title = GetLabel(y_variable);
+    SetupHist2D(hist, title, x_title, y_title);
+    
+    // draw
+    hist.Draw("colz");
     
     // save plot
     std::string output_name = plot_dir + "/" + sample_name + "_" + plot_name; 
@@ -111,7 +153,7 @@ void NanoClass::Loop()
     //    fChain->SetBranchStatus("branchname",1);  // activate branchname
     // METHOD2: replace line
     //    fChain->GetEntry(jentry);       //read all branches
-    // by  b_branchname->GetEntry(ientry); //read only this branch
+    // by b_branchname->GetEntry(ientry); //read only this branch
     
     gROOT->SetBatch(kTRUE);
     gStyle->SetOptStat(111111);
@@ -121,18 +163,23 @@ void NanoClass::Loop()
         return;
     }
 
-    std::string plot_dir = "macro_plots";
+    std::string plot_dir    = "macro_plots";
+    std::string output_dir  = "output";
     
     // T2-4bd
-    std::string sample = "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490";
+    //std::string sample = "SMS-T2-4bd_genMET-80_mStop-500_mLSP-490";
     // TTJets_DiLept
-    //std::string sample = "TTJets_DiLept";
+    std::string sample = "TTJets_DiLept";
+
+    // output file
+    std::string output_file = output_dir + "/" + sample + ".root";
+    TFile f = TFile(output_file.c_str(), "RECREATE");
     
     printf("Running over %s\n", sample.c_str());
 
     Long64_t nentries = fChain->GetEntriesFast();
     Long64_t nbytes = 0, nb = 0;
-    Long64_t max_event = 20000;
+    Long64_t max_event = 1e6;
 
     // Int_t           LowPtElectron_genPartIdx[5];   //[nLowPtElectron]
     // UChar_t         LowPtElectron_genPartFlav[5];   //[nLowPtElectron]
@@ -180,6 +227,11 @@ void NanoClass::Loop()
     TH1F h_LowPtElectron_dzSig_genPartFlav5         = TH1F("h_LowPtElectron_dzSig_genPartFlav5",        "h_LowPtElectron_dzSig_genPartFlav5",       50,    0.0,  5.0);
     TH1F h_LowPtElectron_ID_genPartFlav5            = TH1F("h_LowPtElectron_ID_genPartFlav5",           "h_LowPtElectron_ID_genPartFlav5",          50,   -1.0,  15.0);
     TH1F h_LowPtElectron_embeddedID_genPartFlav5    = TH1F("h_LowPtElectron_embeddedID_genPartFlav5",   "h_LowPtElectron_embeddedID_genPartFlav5",  50,   -1.0,  15.0);
+    // 2D histos
+    TH2F h_LowPtElectron_genPartFlav_vs_ID          = TH2F("h_LowPtElectron_genPartFlav_vs_ID",         "h_LowPtElectron_genPartFlav_vs_ID",            50,  -1.0, 15.0, 6, 0, 6);
+    TH2F h_LowPtElectron_genPartFlav_vs_embeddedID  = TH2F("h_LowPtElectron_genPartFlav_vs_embeddedID", "h_LowPtElectron_genPartFlav_vs_embeddedID",    50,  -1.0, 15.0, 6, 0, 6);
+    TH2F h_LowPtElectron_genPartFlav_vs_dxy         = TH2F("h_LowPtElectron_genPartFlav_vs_dxy",        "h_LowPtElectron_genPartFlav_vs_dxy",           50, -0.02, 0.02, 6, 0, 6);
+    TH2F h_LowPtElectron_genPartFlav_vs_dz          = TH2F("h_LowPtElectron_genPartFlav_vs_dz",         "h_LowPtElectron_genPartFlav_vs_dz",            50, -0.02, 0.02, 6, 0, 6);
     
     for (Long64_t jentry=0; jentry<nentries;jentry++) {
         // break if max event is reached
@@ -229,6 +281,11 @@ void NanoClass::Loop()
             h_LowPtElectron_dzSig.Fill(dzSig);
             h_LowPtElectron_ID.Fill(LowPtElectron_ID[k]);
             h_LowPtElectron_embeddedID.Fill(LowPtElectron_embeddedID[k]);
+            // 2D histos
+            h_LowPtElectron_genPartFlav_vs_ID.Fill(LowPtElectron_ID[k], LowPtElectron_genPartFlav[k]);
+            h_LowPtElectron_genPartFlav_vs_embeddedID.Fill(LowPtElectron_embeddedID[k], LowPtElectron_genPartFlav[k]);
+            h_LowPtElectron_genPartFlav_vs_dxy.Fill(LowPtElectron_dxy[k], LowPtElectron_genPartFlav[k]);
+            h_LowPtElectron_genPartFlav_vs_dz.Fill(LowPtElectron_dz[k], LowPtElectron_genPartFlav[k]);
             // LowPtElectron_genPartFlav == 0
             if (LowPtElectron_genPartFlav[k] == 0)
             {
@@ -282,6 +339,11 @@ void NanoClass::Loop()
     PlotHist(h_LowPtElectron_dzSig,         sample, plot_dir, "h_LowPtElectron_dzSig",          "dzSig");
     PlotHist(h_LowPtElectron_ID,            sample, plot_dir, "h_LowPtElectron_ID",             "ID");
     PlotHist(h_LowPtElectron_embeddedID,    sample, plot_dir, "h_LowPtElectron_embeddedID",     "embeddedID");
+    // 2D histos
+    PlotHist2D(h_LowPtElectron_genPartFlav_vs_ID,           sample, plot_dir, "h_LowPtElectron_genPartFlav_vs_ID",          "ID",           "genPartFlav");
+    PlotHist2D(h_LowPtElectron_genPartFlav_vs_embeddedID,   sample, plot_dir, "h_LowPtElectron_genPartFlav_vs_embeddedID",  "embeddedID",   "genPartFlav");
+    PlotHist2D(h_LowPtElectron_genPartFlav_vs_dxy,          sample, plot_dir, "h_LowPtElectron_genPartFlav_vs_dxy",         "dxy",          "genPartFlav");
+    PlotHist2D(h_LowPtElectron_genPartFlav_vs_dz,           sample, plot_dir, "h_LowPtElectron_genPartFlav_vs_dz",          "dz",           "genPartFlav");
     // LowPtElectron_genPartFlav == 0
     PlotHist(h_LowPtElectron_dxy_genPartFlav0,          sample, plot_dir, "h_LowPtElectron_dxy_genPartFlav0",           "dxy");
     PlotHist(h_LowPtElectron_dxyErr_genPartFlav0,       sample, plot_dir, "h_LowPtElectron_dxyErr_genPartFlav0",        "dxyErr");
@@ -309,4 +371,7 @@ void NanoClass::Loop()
     PlotHist(h_LowPtElectron_dzSig_genPartFlav5,        sample, plot_dir, "h_LowPtElectron_dzSig_genPartFlav5",         "dzSig");
     PlotHist(h_LowPtElectron_ID_genPartFlav5,           sample, plot_dir, "h_LowPtElectron_ID_genPartFlav5",            "ID");
     PlotHist(h_LowPtElectron_embeddedID_genPartFlav5,   sample, plot_dir, "h_LowPtElectron_embeddedID_genPartFlav5",    "embeddedID");
+    
+    // Save all histograms in memory to file
+    f.Write();
 }

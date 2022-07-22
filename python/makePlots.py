@@ -15,11 +15,9 @@ ROOT.TH1.AddDirectory(False)
 ROOT.gStyle.SetOptStat(111111)
 
 # TODO:
-# - Debug and fix LowPtElectron_genPartFlav: type is UChar_t.
-# - Fix IPErr: use correct error propagation
 # - 1D plots: IP, IPErr, IPSig
-# - 1D plots: ID, embedded ID with genPartFlav selection
-# - 2D plots: ID vs. genPartFlav, embedded ID vs. genPartFlav, dxy vs. genPartFlav, dz vs. genPartFlav
+# - Fix IPErr: use correct error propagation
+# - Debug and fix LowPtElectron_genPartFlav: type is UChar_t.
 # DONE:
 # - 1D plots: ID, embedded ID
 
@@ -91,7 +89,8 @@ def plotHist(hist, sample_name, plot_dir, plot_name, variable):
     y_title     = "Entries"
     color       = "black"
     lineWidth   = 1
-    tools.setupHist(hist, title, x_title, y_title, y_min, y_max, color, lineWidth)
+    stats       = True
+    tools.setupHist(hist, title, x_title, y_title, y_min, y_max, color, lineWidth, stats)
     
     # draw
     hist.Draw("hist error same")
@@ -197,7 +196,7 @@ def run(plot_dir, sample_name, tree, max_event):
 
 # run over input file
 def makePlots():
-    max_event   = 20000
+    max_event   = 1e4
     #max_event   = -1
     plot_dir    = "plots"
     tools.makeDir(plot_dir)
