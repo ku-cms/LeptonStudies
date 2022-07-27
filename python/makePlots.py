@@ -61,9 +61,16 @@ def getDR(dxy, dz):
     return np.sqrt(dxy ** 2 + dz ** 2)
 
 # TODO: fix with correct error propagation
+
 # get DR error (IP error)
-def getDRErr(sig_xy, sig_z):
-    return np.sqrt(sig_xy ** 2 + sig_z ** 2)
+# v1: add errors in quadrature
+def getDRErr_v1(dxyErr, dzErr):
+    return np.sqrt(dxyErr ** 2 + dzErr ** 2)
+
+# get DR error (IP error)
+# v2: use full error propagation
+def getDRErr_v2(dxy, dz, dxyErr, dzErr):
+    return np.sqrt(((dxy * dxyErr) ** 2 + (dz * dzErr) ** 2)/(dxy ** 2 + dz ** 2))
 
 # get significance
 def getSig(value, value_error):
@@ -162,7 +169,8 @@ def run(plot_dir, sample_name, tree, max_event):
         for j in range(nLowPtElectron):
             # get DR
             dr     = getDR(LowPtElectron_dxy[j], LowPtElectron_dz[j])
-            drErr  = getDRErr(LowPtElectron_dxyErr[j], LowPtElectron_dzErr[j])
+            #drErr  = getDRErr_v1(LowPtElectron_dxyErr[j], LowPtElectron_dzErr[j])
+            drErr  = getDRErr_v2(LowPtElectron_dxy[j], LowPtElectron_dz[j], LowPtElectron_dxyErr[j], LowPtElectron_dzErr[j])
             # get significances
             dxySig = getSig(LowPtElectron_dxy[j], LowPtElectron_dxyErr[j])
             dzSig  = getSig(LowPtElectron_dz[j],  LowPtElectron_dzErr[j])
