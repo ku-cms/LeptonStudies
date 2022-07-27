@@ -15,10 +15,10 @@ ROOT.TH1.AddDirectory(False)
 ROOT.gStyle.SetOptStat(111111)
 
 # TODO:
-# - 1D plots: IP, IPErr, IPSig
-# - Fix IPErr: use correct error propagation
 # - Debug and fix LowPtElectron_genPartFlav: type is UChar_t.
 # DONE:
+# - 1D plots: IP, IPErr, IPSig (dr, drErr, drSig)
+# - Fix IPErr: use correct error propagation
 # - 1D plots: ID, embedded ID
 
 # get label for variable
@@ -59,8 +59,6 @@ def getLabel(variable):
 # get DR (IP = IP_3D = DR_3D)
 def getDR(dxy, dz):
     return np.sqrt(dxy ** 2 + dz ** 2)
-
-# TODO: fix with correct error propagation
 
 # get DR error (IP error)
 # v1: add errors in quadrature
@@ -169,11 +167,19 @@ def run(plot_dir, sample_name, tree, max_event):
         for j in range(nLowPtElectron):
             # get DR
             dr     = getDR(LowPtElectron_dxy[j], LowPtElectron_dz[j])
+            
+            # testing old version:
             #drErr  = getDRErr_v1(LowPtElectron_dxyErr[j], LowPtElectron_dzErr[j])
+            # correct version:
             drErr  = getDRErr_v2(LowPtElectron_dxy[j], LowPtElectron_dz[j], LowPtElectron_dxyErr[j], LowPtElectron_dzErr[j])
+            
             # get significances
             dxySig = getSig(LowPtElectron_dxy[j], LowPtElectron_dxyErr[j])
             dzSig  = getSig(LowPtElectron_dz[j],  LowPtElectron_dzErr[j])
+            
+            # testing old version:
+            #drSig  = getDR(dxySig, dzSig)
+            # correct version:
             drSig  = getSig(dr, drErr)
             
             if verbose:
