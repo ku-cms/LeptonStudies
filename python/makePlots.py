@@ -116,15 +116,15 @@ def run(plot_dir, sample_name, tree, max_event):
     h_LowPtElectron_mass        = ROOT.TH1F("h_LowPtElectron_mass",         "h_LowPtElectron_mass",         20,  -0.01,  0.01)
     h_LowPtElectron_genPartIdx  = ROOT.TH1F("h_LowPtElectron_genPartIdx",   "h_LowPtElectron_genPartIdx",   20,    0.0,  100.0)
     #h_LowPtElectron_genPartFlav = ROOT.TH1F("h_LowPtElectron_genPartFlav",  "h_LowPtElectron_genPartFlav",  30,      0.0,  30.0)
-    h_LowPtElectron_dxy         = ROOT.TH1F("h_LowPtElectron_dxy",          "h_LowPtElectron_dxy",          50,  -0.02,  0.02)
+    h_LowPtElectron_dxy         = ROOT.TH1F("h_LowPtElectron_dxy",          "h_LowPtElectron_dxy",          50,   -0.2,  0.2)
     h_LowPtElectron_dxyErr      = ROOT.TH1F("h_LowPtElectron_dxyErr",       "h_LowPtElectron_dxyErr",       50,    0.0,  0.1)
-    h_LowPtElectron_dxySig      = ROOT.TH1F("h_LowPtElectron_dxySig",       "h_LowPtElectron_dxySig",       50,    0.0,  5.0)
-    h_LowPtElectron_dz          = ROOT.TH1F("h_LowPtElectron_dz",           "h_LowPtElectron_dz",           50,  -0.02,  0.02)
+    h_LowPtElectron_dxySig      = ROOT.TH1F("h_LowPtElectron_dxySig",       "h_LowPtElectron_dxySig",       50,    0.0,  10.0)
+    h_LowPtElectron_dz          = ROOT.TH1F("h_LowPtElectron_dz",           "h_LowPtElectron_dz",           50,   -0.2,  0.2)
     h_LowPtElectron_dzErr       = ROOT.TH1F("h_LowPtElectron_dzErr",        "h_LowPtElectron_dzErr",        50,    0.0,  0.1)
-    h_LowPtElectron_dzSig       = ROOT.TH1F("h_LowPtElectron_dzSig",        "h_LowPtElectron_dzSig",        50,    0.0,  5.0)
-    h_LowPtElectron_dr          = ROOT.TH1F("h_LowPtElectron_dr",           "h_LowPtElectron_dr",           50,  -0.02,  0.02)
+    h_LowPtElectron_dzSig       = ROOT.TH1F("h_LowPtElectron_dzSig",        "h_LowPtElectron_dzSig",        50,    0.0,  10.0)
+    h_LowPtElectron_dr          = ROOT.TH1F("h_LowPtElectron_dr",           "h_LowPtElectron_dr",           50,    0.0,  0.2)
     h_LowPtElectron_drErr       = ROOT.TH1F("h_LowPtElectron_drErr",        "h_LowPtElectron_drErr",        50,    0.0,  0.1)
-    h_LowPtElectron_drSig       = ROOT.TH1F("h_LowPtElectron_drSig",        "h_LowPtElectron_drSig",        50,    0.0,  5.0)
+    h_LowPtElectron_drSig       = ROOT.TH1F("h_LowPtElectron_drSig",        "h_LowPtElectron_drSig",        50,    0.0,  10.0)
     h_LowPtElectron_ID          = ROOT.TH1F("h_LowPtElectron_ID",           "h_LowPtElectron_ID",           50,   -1.0,  15.0)
     h_LowPtElectron_embeddedID  = ROOT.TH1F("h_LowPtElectron_embeddedID",   "h_LowPtElectron_embeddedID",   50,   -1.0,  15.0)
     
@@ -226,6 +226,7 @@ def makePlots():
 
     for sample in samples:
         print("Running over {0}".format(sample))
+        print("Max event: {0:.0f}".format(max_event))
         
         input_file = samples[sample]
     
