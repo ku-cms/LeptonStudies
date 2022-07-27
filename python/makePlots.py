@@ -38,6 +38,9 @@ def getLabel(variable):
         "dz"            : "d_{z}",
         "dzErr"         : "d_{z} err",
         "dzSig"         : "d_{z} sig",
+        "dr"            : "d_{r}",
+        "drErr"         : "d_{r} err",
+        "drSig"         : "d_{r} sig",
         "ID"            : "ID",
         "embeddedID"    : "embedded ID",
     }
@@ -53,13 +56,13 @@ def getLabel(variable):
         label = variable
     return label
 
-# get IP = IP_3D = DR_3D
-def getIP(dxy, dz):
+# get DR (IP = IP_3D = DR_3D)
+def getDR(dxy, dz):
     return np.sqrt(dxy ** 2 + dz ** 2)
 
 # TODO: fix with correct error propagation
-# get IP error
-def getIPErr(sig_xy, sig_z):
+# get DR error (IP error)
+def getDRErr(sig_xy, sig_z):
     return np.sqrt(sig_xy ** 2 + sig_z ** 2)
 
 # get significance
@@ -119,6 +122,9 @@ def run(plot_dir, sample_name, tree, max_event):
     h_LowPtElectron_dz          = ROOT.TH1F("h_LowPtElectron_dz",           "h_LowPtElectron_dz",           50,  -0.02,  0.02)
     h_LowPtElectron_dzErr       = ROOT.TH1F("h_LowPtElectron_dzErr",        "h_LowPtElectron_dzErr",        50,    0.0,  0.1)
     h_LowPtElectron_dzSig       = ROOT.TH1F("h_LowPtElectron_dzSig",        "h_LowPtElectron_dzSig",        50,    0.0,  5.0)
+    h_LowPtElectron_dr          = ROOT.TH1F("h_LowPtElectron_dr",           "h_LowPtElectron_dr",           50,  -0.02,  0.02)
+    h_LowPtElectron_drErr       = ROOT.TH1F("h_LowPtElectron_drErr",        "h_LowPtElectron_drErr",        50,    0.0,  0.1)
+    h_LowPtElectron_drSig       = ROOT.TH1F("h_LowPtElectron_drSig",        "h_LowPtElectron_drSig",        50,    0.0,  5.0)
     h_LowPtElectron_ID          = ROOT.TH1F("h_LowPtElectron_ID",           "h_LowPtElectron_ID",           50,   -1.0,  15.0)
     h_LowPtElectron_embeddedID  = ROOT.TH1F("h_LowPtElectron_embeddedID",   "h_LowPtElectron_embeddedID",   50,   -1.0,  15.0)
     
@@ -154,9 +160,13 @@ def run(plot_dir, sample_name, tree, max_event):
         
         # loop over LowPtElectron
         for j in range(nLowPtElectron):
-            # get significance
+            # get DR
+            dr     = getDR(LowPtElectron_dxy[j], LowPtElectron_dz[j])
+            drErr  = getDRErr(LowPtElectron_dxyErr[j], LowPtElectron_dzErr[j])
+            # get significances
             dxySig = getSig(LowPtElectron_dxy[j], LowPtElectron_dxyErr[j])
             dzSig  = getSig(LowPtElectron_dz[j],  LowPtElectron_dzErr[j])
+            drSig  = getSig(dr, drErr)
             
             if verbose:
                 print("LowPtElectron {0}: pt = {1:.3f}, eta = {2:.3f}, phi = {3:.3f}, mass = {4:.3f}".format(j, LowPtElectron_pt[j], LowPtElectron_eta[j], LowPtElectron_phi[j], LowPtElectron_mass[j]))
@@ -174,6 +184,9 @@ def run(plot_dir, sample_name, tree, max_event):
             h_LowPtElectron_dz.Fill(LowPtElectron_dz[j])
             h_LowPtElectron_dzErr.Fill(LowPtElectron_dzErr[j])
             h_LowPtElectron_dzSig.Fill(dzSig)
+            h_LowPtElectron_dr.Fill(dr)
+            h_LowPtElectron_drErr.Fill(drErr)
+            h_LowPtElectron_drSig.Fill(drSig)
             h_LowPtElectron_ID.Fill(LowPtElectron_ID[j])
             h_LowPtElectron_embeddedID.Fill(LowPtElectron_embeddedID[j])
     
@@ -191,6 +204,9 @@ def run(plot_dir, sample_name, tree, max_event):
     plotHist(h_LowPtElectron_dz,            sample_name, plot_dir, "LowPtElectron_dz",          "dz")
     plotHist(h_LowPtElectron_dzErr,         sample_name, plot_dir, "LowPtElectron_dzErr",       "dzErr")
     plotHist(h_LowPtElectron_dzSig,         sample_name, plot_dir, "LowPtElectron_dzSig",       "dzSig")
+    plotHist(h_LowPtElectron_dr,            sample_name, plot_dir, "LowPtElectron_dr",          "dr")
+    plotHist(h_LowPtElectron_drErr,         sample_name, plot_dir, "LowPtElectron_drErr",       "drErr")
+    plotHist(h_LowPtElectron_drSig,         sample_name, plot_dir, "LowPtElectron_drSig",       "drSig")
     plotHist(h_LowPtElectron_ID,            sample_name, plot_dir, "LowPtElectron_ID",          "ID")
     plotHist(h_LowPtElectron_embeddedID,    sample_name, plot_dir, "LowPtElectron_embeddedID",  "embeddedID")
 
