@@ -254,6 +254,7 @@ plt.title("TTJETS Fall 17",fontsize=18)
 plt.legend(bbox_to_anchor=(0.99, 0.8))
 
 
-plt.show()
+#plt.show()
+plt.savefig("efficiency.pdf")
 
 

@@ -174,6 +174,9 @@ def SumFind(input):
     f.write(",".join(l))
     f.close()
 
-ii= input("Sample name?")
-
+#ii = input("Enter sample name: ")
+#print("Sample name: {0}".format(ii))
+ii = "T4bd_UL"
 SumFind(ii)
+
+
