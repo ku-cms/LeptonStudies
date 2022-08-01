@@ -3370,10 +3370,10 @@ public :
    virtual void         Loop();
    virtual void         LoadSignal(TChain *chain);
    virtual void         LoadBackground(TChain *chain);
-   virtual void         PlotHist(TH1F &hist, std::string sample_name, std::string plot_dir,std::string pt_cut, std::string specific, std::string plot_name, std::string variable);
    virtual void         SetupHist(TH1F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width);
-   virtual void         PlotHist2(TH2F &hist, std::string sample_name, std::string plot_dir, std::string plot_name, std::string variable, std::string variable2);
-   virtual void         SetupHist2(TH2F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width);
+   virtual void         SetupHist2D(TH2F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width);
+   virtual void         PlotHist(TH1F &hist, std::string sample_name, std::string plot_dir,std::string pt_cut, std::string specific, std::string plot_name, std::string variable);
+   virtual void         PlotHist2D(TH2F &hist, std::string sample_name, std::string plot_dir, std::string plot_name, std::string variable, std::string variable2);
    virtual void         ROC(TH1F &sigHist, TH1F &bkgHist, std::string plot_name);
    virtual std::string  GetLabel(std::string variable);
    virtual Bool_t       Notify();

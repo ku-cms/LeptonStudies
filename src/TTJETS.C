@@ -51,7 +51,21 @@ std::string TTJETS::GetLabel(std::string variable)
 
 void TTJETS::SetupHist(TH1F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width)
 {
-    hist.SetStats(kFALSE);
+    hist.SetStats(kTRUE);
+
+    TAxis* x_axis = hist.GetXaxis();
+    TAxis* y_axis = hist.GetYaxis();
+
+    hist.SetTitle(title.c_str());
+    x_axis->SetTitle(x_title.c_str());
+    y_axis->SetTitle(y_title.c_str());
+    hist.SetLineColor(color);
+    hist.SetLineWidth(line_width);
+}
+
+void TTJETS::SetupHist2D(TH2F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width)
+{
+    hist.SetStats(kTRUE);
 
     TAxis* x_axis = hist.GetXaxis();
     TAxis* y_axis = hist.GetYaxis();
@@ -72,7 +86,7 @@ void TTJETS::PlotHist(TH1F &hist, std::string sample_name, std::string plot_dir,
     c.SetLeftMargin(0.15);
 
     // setup histogram
-    std::string title = "TTbar_" + pt_cut + plot_name;
+    std::string title = "TTbar_" + pt_cut + "_" + plot_name;
     std::string x_title = GetLabel(variable);
     std::string y_title = "Entries";
     int color = kBlack;
@@ -85,7 +99,7 @@ void TTJETS::PlotHist(TH1F &hist, std::string sample_name, std::string plot_dir,
     gStyle->SetStatX(0.9);
     // draw
     hist.Draw("hist error same");
-    hist.SetStats(kTRUE);
+    //hist.SetStats(kTRUE);
     int lepnum = hist.GetEntries();
     std::string s = std::to_string(lepnum);
     std::string entry = pt_cut + "_" + plot_name + "," + s;
@@ -96,37 +110,25 @@ void TTJETS::PlotHist(TH1F &hist, std::string sample_name, std::string plot_dir,
     if (fw.is_open())
     {
         //store array contents to text file
-
         fw << entry.c_str() << "\n";
-
         fw.close();
     }
-    else cout << "Problem with opening file";
-
+    else
+    {
+        cout << "Problem with opening file";
+    }
 
     // save plot
-    std::string output_name = plot_dir + sample_name + "/" + pt_cut + "/" + specific + "/" + pt_cut + "_" + plot_name;
+    // old path
+    //std::string output_name = plot_dir + sample_name + "/" + pt_cut + "/" + specific + "/" + pt_cut + "_" + plot_name;
+    // new path
+    std::string output_name = plot_dir + "/" + sample_name + "_" + pt_cut + "_" + specific + "_" + plot_name;
     std::string output_name_pdf = output_name + ".pdf";
     c.Update();
     c.SaveAs(output_name_pdf.c_str()); ;
 }
 
-
-void TTJETS::SetupHist2(TH2F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width)
-{
-    hist.SetStats(kFALSE);
-
-    TAxis* x_axis = hist.GetXaxis();
-    TAxis* y_axis = hist.GetYaxis();
-
-    hist.SetTitle(title.c_str());
-    x_axis->SetTitle(x_title.c_str());
-    y_axis->SetTitle(y_title.c_str());
-    hist.SetLineColor(color);
-    hist.SetLineWidth(line_width);
-}
-
-void TTJETS::PlotHist2(TH2F &hist, std::string sample_name, std::string plot_dir, std::string plot_name, std::string variable, std::string variable2)
+void TTJETS::PlotHist2D(TH2F &hist, std::string sample_name, std::string plot_dir, std::string plot_name, std::string variable, std::string variable2)
 {
     printf("Plotting %s\n", plot_name.c_str());
 
@@ -140,7 +142,7 @@ void TTJETS::PlotHist2(TH2F &hist, std::string sample_name, std::string plot_dir
     std::string y_title = GetLabel(variable2);
     int color = kBlack;
     int line_width = 1;
-    SetupHist2(hist, title, x_title, y_title, color, line_width);
+    SetupHist2D(hist, title, x_title, y_title, color, line_width);
     gStyle->SetOptStat(111111);
     // Set stat options
     gStyle->SetStatY(0.9);                
@@ -148,7 +150,7 @@ void TTJETS::PlotHist2(TH2F &hist, std::string sample_name, std::string plot_dir
     gStyle->SetStatX(0.1);
     // draw
     hist.Draw("colz");
-    hist.SetStats(kTRUE);
+    //hist.SetStats(kTRUE);
 
     // save plot
     std::string output_name = plot_dir+"2DPlots/" + plot_name;
@@ -159,7 +161,7 @@ void TTJETS::PlotHist2(TH2F &hist, std::string sample_name, std::string plot_dir
 
 void TTJETS::ROC(TH1F &sigHist, TH1F &bkgHist, std::string plot_name)//, std::string sample_name, std::string plot_dir,"NoCut", std::string plot_name, std::string variable,std::string variable2)
 {
-    printf("Plotting ROC");
+    printf("Plotting ROC: %s\n", plot_name.c_str());
     // canvas
     TCanvas c = TCanvas("c", "c", 800, 800);
     c.SetLeftMargin(0.15);
@@ -185,11 +187,9 @@ void TTJETS::ROC(TH1F &sigHist, TH1F &bkgHist, std::string plot_name)//, std::st
         // that point is (1,1) on the ROC curve.
         float sig_slice_integral = sigHist.Integral(nbins - i, nbins);
         float bkg_slice_integral = bkgHist.Integral(nbins - i, nbins);
-        // HARDCODE
-        //int Fake = 3688;
-        //int Real = 589;
-        std::cout << std::fixed << std::setprecision(2) << sig_slice_integral;
-        std::cout << std::fixed << std::setprecision(2) << bkg_slice_integral;
+        std::cout << "i = " << i << "; ";
+        std::cout << "signal = " << std::fixed << std::setprecision(2) << sig_slice_integral << ", ";
+        std::cout << "background = " << std::fixed << std::setprecision(2) << bkg_slice_integral << std::endl;
         sigPoints.push_back(sig_slice_integral / sig_integral);
         bkgPoints.push_back(bkg_slice_integral / bkg_integral);
     }
@@ -1876,32 +1876,29 @@ void TTJETS::Loop()
         return;
     }
 
-    std::string plot_dir = "IRON_Plots/ROC_Plots";
-    std::string sample = "TTJETS";
+    std::string plot_dir    = "IRON_Plots/ROC_Plots";
+    std::string sample      = "TTJETS";
+    std::string nam         = "NanoAODv9";
+    
     printf("Running over %s\n", sample.c_str());
 
     Long64_t nentries = fChain->GetEntriesFast();
     Long64_t nbytes = 0, nb = 0;
     float Lower_pt = 10.0;
     float Higher_pt = 20.0;
-    std::string nam ="YouShouldChangeThis";
 
-    TH1F Flav0_EMID_R = TH1F("Flav0_EMID", "Flav0_EMID", 22, 4.0, 12.0);
-    TH1F Flav1_EMID_R = TH1F("Flav1_EMID", "Flav1_EMID", 22, 4.0, 12.0);
-
-    TH1F Iron1_Flav0_EMID_R = TH1F("Iron1_Flav0_EMID", "Iron1_Flav0_EMID", 22, 4.0, 12.0);
-    TH1F Iron1_Flav1_EMID_R = TH1F("Iron1_Flav1_EMID", "Iron1_Flav1_EMID", 22, 4.0, 12.0);
-
-    TH1F Iron2_Flav0_EMID_R = TH1F("Iron2_Flav0_EMID", "Iron2_Flav0_EMID", 22, 4.0, 12.0);
-    TH1F Iron2_Flav1_EMID_R = TH1F("Iron2_Flav1_EMID", "Iron2_Flav1_EMID", 22, 4.0, 12.0);
-
-    TH1F Long1_Flav0_EMID_R = TH1F("Long1_Flav0_EMID", "Long1_Flav0_EMID", 22, 4.0, 12.0);
-    TH1F Long1_Flav1_EMID_R = TH1F("Long1_Flav1_EMID", "Long1_Flav1_EMID", 22, 4.0, 12.0);
-    TH1F Long2_Flav0_EMID_R = TH1F("Long2_Flav0_EMID", "Long2_Flav0_EMID", 22, 4.0, 12.0);
-    TH1F Long2_Flav1_EMID_R = TH1F("Long2_Flav1_EMID", "Long2_Flav1_EMID", 22, 4.0, 12.0);
-
-    TH1F IronFake_Flav0_EMID_R = TH1F("IronFake_Flav0_EMID", "IronFake_Flav0_EMID", 22, 4.0, 12.0);
-    TH1F IronFake_Flav1_EMID_R = TH1F("IronFake_Flav1_EMID", "IronFake_Flav1_EMID", 22, 4.0, 12.0);
+    TH1F Flav0_EMID_R           = TH1F("Flav0_EMID", "Flav0_EMID", 22, 4.0, 12.0);
+    TH1F Flav1_EMID_R           = TH1F("Flav1_EMID", "Flav1_EMID", 22, 4.0, 12.0);
+    TH1F Iron1_Flav0_EMID_R     = TH1F("Iron1_Flav0_EMID", "Iron1_Flav0_EMID", 22, 4.0, 12.0);
+    TH1F Iron1_Flav1_EMID_R     = TH1F("Iron1_Flav1_EMID", "Iron1_Flav1_EMID", 22, 4.0, 12.0);
+    TH1F Iron2_Flav0_EMID_R     = TH1F("Iron2_Flav0_EMID", "Iron2_Flav0_EMID", 22, 4.0, 12.0);
+    TH1F Iron2_Flav1_EMID_R     = TH1F("Iron2_Flav1_EMID", "Iron2_Flav1_EMID", 22, 4.0, 12.0);
+    TH1F Long1_Flav0_EMID_R     = TH1F("Long1_Flav0_EMID", "Long1_Flav0_EMID", 22, 4.0, 12.0);
+    TH1F Long1_Flav1_EMID_R     = TH1F("Long1_Flav1_EMID", "Long1_Flav1_EMID", 22, 4.0, 12.0);
+    TH1F Long2_Flav0_EMID_R     = TH1F("Long2_Flav0_EMID", "Long2_Flav0_EMID", 22, 4.0, 12.0);
+    TH1F Long2_Flav1_EMID_R     = TH1F("Long2_Flav1_EMID", "Long2_Flav1_EMID", 22, 4.0, 12.0);
+    TH1F IronFake_Flav0_EMID_R  = TH1F("IronFake_Flav0_EMID", "IronFake_Flav0_EMID", 22, 4.0, 12.0);
+    TH1F IronFake_Flav1_EMID_R  = TH1F("IronFake_Flav1_EMID", "IronFake_Flav1_EMID", 22, 4.0, 12.0);
 
     for (Long64_t jentry = 0; jentry < nentries; jentry++)
     {
@@ -1918,14 +1915,12 @@ void TTJETS::Loop()
         // loop over electrons
         for (int k = 0; k < nLowPtElectron; ++k)
         {
-
             float dxySig = -999;
             // avoid dividing by 0
             if (LowPtElectron_dxyErr[k] != 0)
             {
                 dxySig = LowPtElectron_dxy[k] / LowPtElectron_dxyErr[k];
             }
-
 
             float dzSig = -999;
 
@@ -1934,8 +1929,7 @@ void TTJETS::Loop()
                 dzSig = LowPtElectron_dz[k] / LowPtElectron_dzErr[k];
             }
 
-
-            float IPSig1 = -999; //
+            float IPSig1 = -999; 
             if (LowPtElectron_dxyErr[k] != 0 && LowPtElectron_dzErr[k] != 0)
             {
                 IPSig1 = sqrt(dxySig * dxySig + dzSig * dzSig);
@@ -2176,10 +2170,12 @@ void TTJETS::Random()
         return;
     }
 
-    std::string plot_dir = "IRON_Plots/Random";
-    std::string sample = "TTJETS";
+    std::string plot_dir    = "IRON_Plots/Random";
+    std::string sample      = "TTJETS";
+    std::string nam         = "NanoAODv9";
+    
     printf("Running over %s\n", sample.c_str());
-    std::string nam = "YouShouldChangeThis";
+
     Long64_t nentries = fChain->GetEntriesFast();
     Long64_t nbytes = 0, nb = 0;
 
@@ -2640,94 +2636,94 @@ void TTJETS::Random()
         }//End of loop
     }
     
-    PlotHist2(pt_vs_FLAV0_Low, sample, plot_dir, "pt_vs_FLAV0_Iron1Low", "pt", "FLAV0");
-    PlotHist2(pt_vs_FLAV0_Mid, sample, plot_dir, "pt_vs_FLAV0_Iron1Mid", "pt", "FLAV0");
-    PlotHist2(pt_vs_FLAV0_High, sample, plot_dir, "pt_vs_FLAV0_Iron1High", "pt", "FLAV0");
-    PlotHist2(pt_vs_FLAV0_NoPt, sample, plot_dir, "pt_vs_FLAV0_Iron1NoPt", "pt", "FLAV0");
+    PlotHist2D(pt_vs_FLAV0_Low, sample, plot_dir, "pt_vs_FLAV0_Iron1Low", "pt", "FLAV0");
+    PlotHist2D(pt_vs_FLAV0_Mid, sample, plot_dir, "pt_vs_FLAV0_Iron1Mid", "pt", "FLAV0");
+    PlotHist2D(pt_vs_FLAV0_High, sample, plot_dir, "pt_vs_FLAV0_Iron1High", "pt", "FLAV0");
+    PlotHist2D(pt_vs_FLAV0_NoPt, sample, plot_dir, "pt_vs_FLAV0_Iron1NoPt", "pt", "FLAV0");
 
-    PlotHist2(pt_vs_FLAV1_Low, sample, plot_dir, "pt_vs_FLAV1_Iron1Low", "pt", "FLAV1");
-    PlotHist2(pt_vs_FLAV1_Mid, sample, plot_dir, "pt_vs_FLAV1_Iron1Mid", "pt", "FLAV1");
-    PlotHist2(pt_vs_FLAV1_High, sample, plot_dir, "pt_vs_FLAV1_Iron1High", "pt", "FLAV1");
-    PlotHist2(pt_vs_FLAV1_NoPt, sample, plot_dir, "pt_vs_FLAV1_Iron1NoPt", "pt", "FLAV1");
+    PlotHist2D(pt_vs_FLAV1_Low, sample, plot_dir, "pt_vs_FLAV1_Iron1Low", "pt", "FLAV1");
+    PlotHist2D(pt_vs_FLAV1_Mid, sample, plot_dir, "pt_vs_FLAV1_Iron1Mid", "pt", "FLAV1");
+    PlotHist2D(pt_vs_FLAV1_High, sample, plot_dir, "pt_vs_FLAV1_Iron1High", "pt", "FLAV1");
+    PlotHist2D(pt_vs_FLAV1_NoPt, sample, plot_dir, "pt_vs_FLAV1_Iron1NoPt", "pt", "FLAV1");
 
-    PlotHist2(pt_vs_EMID_FLAV0_Low, sample, plot_dir, " pt_vs_EMID_FLAV0_Low", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FLAV1_Low, sample, plot_dir, " pt_vs_EMID_FLAV1_Low", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FLAV5_Low, sample, plot_dir, " pt_vs_EMID_FLAV5_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV0_Low, sample, plot_dir, " pt_vs_EMID_FLAV0_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV1_Low, sample, plot_dir, " pt_vs_EMID_FLAV1_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV5_Low, sample, plot_dir, " pt_vs_EMID_FLAV5_Low", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_FLAV0_Mid, sample, plot_dir, " pt_vs_EMID_FLAV0_Mid", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FLAV1_Mid, sample, plot_dir, " pt_vs_EMID_FLAV1_Mid", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FLAV5_Mid, sample, plot_dir, " pt_vs_EMID_FLAV5_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV0_Mid, sample, plot_dir, " pt_vs_EMID_FLAV0_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV1_Mid, sample, plot_dir, " pt_vs_EMID_FLAV1_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV5_Mid, sample, plot_dir, " pt_vs_EMID_FLAV5_Mid", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_FLAV0_High, sample, plot_dir, "pt_vs_EMID_FLAV0_High", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FLAV1_High, sample, plot_dir, " pt_vs_EMID_FLAV1_High", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FLAV5_High, sample, plot_dir, " pt_vs_EMID_FLAV5_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV0_High, sample, plot_dir, "pt_vs_EMID_FLAV0_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV1_High, sample, plot_dir, " pt_vs_EMID_FLAV1_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV5_High, sample, plot_dir, " pt_vs_EMID_FLAV5_High", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_FLAV0_NoPt, sample, plot_dir, " pt_vs_EMID_FLAV0_NoPt", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FLAV1_NoPt, sample, plot_dir, " pt_vs_EMID_FLAV1_NoPt", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FLAV5_NoPt, sample, plot_dir, " pt_vs_EMID_FLAV5_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV0_NoPt, sample, plot_dir, " pt_vs_EMID_FLAV0_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV1_NoPt, sample, plot_dir, " pt_vs_EMID_FLAV1_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FLAV5_NoPt, sample, plot_dir, " pt_vs_EMID_FLAV5_NoPt", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_IRON1_FLAV0_Low, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV0_Low", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_IRON1_FLAV1_Low, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV1_Low", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_IRON1_FLAV5_Low, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV5_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV0_Low, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV0_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV1_Low, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV1_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV5_Low, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV5_Low", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_IRON1_FLAV0_Mid, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV0_Mid", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_IRON1_FLAV1_Mid, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV1_Mid", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_IRON1_FLAV5_Mid, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV5_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV0_Mid, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV0_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV1_Mid, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV1_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV5_Mid, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV5_Mid", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_IRON1_FLAV0_High, sample, plot_dir, "pt_vs_EMID_IRON1_FLAV0_High", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_IRON1_FLAV1_High, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV1_High", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_IRON1_FLAV5_High, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV5_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV0_High, sample, plot_dir, "pt_vs_EMID_IRON1_FLAV0_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV1_High, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV1_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV5_High, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV5_High", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_IRON1_FLAV0_NoPt, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV0_NoPt", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_IRON1_FLAV1_NoPt, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV1_NoPt", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_IRON1_FLAV5_NoPt, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV5_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV0_NoPt, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV0_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV1_NoPt, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV1_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_IRON1_FLAV5_NoPt, sample, plot_dir, " pt_vs_EMID_IRON1_FLAV5_NoPt", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_LONG1_FLAV0_Low, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV0_Low", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_LONG1_FLAV1_Low, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV1_Low", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_LONG1_FLAV5_Low, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV5_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV0_Low, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV0_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV1_Low, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV1_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV5_Low, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV5_Low", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_LONG1_FLAV0_Mid, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV0_Mid", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_LONG1_FLAV1_Mid, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV1_Mid", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_LONG1_FLAV5_Mid, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV5_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV0_Mid, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV0_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV1_Mid, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV1_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV5_Mid, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV5_Mid", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_LONG1_FLAV0_High, sample, plot_dir, "pt_vs_EMID_LONG1_FLAV0_High", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_LONG1_FLAV1_High, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV1_High", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_LONG1_FLAV5_High, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV5_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV0_High, sample, plot_dir, "pt_vs_EMID_LONG1_FLAV0_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV1_High, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV1_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV5_High, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV5_High", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_LONG1_FLAV0_NoPt, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV0_NoPt", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_LONG1_FLAV1_NoPt, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV1_NoPt", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_LONG1_FLAV5_NoPt, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV5_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV0_NoPt, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV0_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV1_NoPt, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV1_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_LONG1_FLAV5_NoPt, sample, plot_dir, " pt_vs_EMID_LONG1_FLAV5_NoPt", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_FAKE_FLAV0_Low, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV0_Low", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FAKE_FLAV1_Low, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV1_Low", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FAKE_FLAV5_Low, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV5_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV0_Low, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV0_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV1_Low, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV1_Low", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV5_Low, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV5_Low", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_FAKE_FLAV0_Mid, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV0_Mid", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FAKE_FLAV1_Mid, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV1_Mid", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FAKE_FLAV5_Mid, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV5_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV0_Mid, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV0_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV1_Mid, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV1_Mid", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV5_Mid, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV5_Mid", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_FAKE_FLAV0_High, sample, plot_dir, "pt_vs_EMID_FAKE_FLAV0_High", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FAKE_FLAV1_High, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV1_High", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FAKE_FLAV5_High, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV5_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV0_High, sample, plot_dir, "pt_vs_EMID_FAKE_FLAV0_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV1_High, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV1_High", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV5_High, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV5_High", "pt", "EMID");
 
-    PlotHist2(pt_vs_EMID_FAKE_FLAV0_NoPt, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV0_NoPt", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FAKE_FLAV1_NoPt, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV1_NoPt", "pt", "EMID");
-    PlotHist2(pt_vs_EMID_FAKE_FLAV5_NoPt, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV5_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV0_NoPt, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV0_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV1_NoPt, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV1_NoPt", "pt", "EMID");
+    PlotHist2D(pt_vs_EMID_FAKE_FLAV5_NoPt, sample, plot_dir, " pt_vs_EMID_FAKE_FLAV5_NoPt", "pt", "EMID");
 
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV0_Low, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV0_Low", "pt", "EMID");
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV1_Low, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV1_Low", "pt", "EMID");
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV5_Low, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV5_Low", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV0_Low, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV0_Low", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV1_Low, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV1_Low", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV5_Low, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV5_Low", "pt", "EMID");
 
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV0_Mid, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV0_Mid", "pt", "EMID");
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV1_Mid, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV1_Mid", "pt", "EMID");
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV5_Mid, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV5_Mid", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV0_Mid, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV0_Mid", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV1_Mid, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV1_Mid", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV5_Mid, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV5_Mid", "pt", "EMID");
 
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV0_High, sample, plot_dir, "Pt_vs_EMID_IRON1_FLAV0_High", "pt", "EMID");
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV1_High, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV1_High", "pt", "EMID");
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV5_High, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV5_High", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV0_High, sample, plot_dir, "Pt_vs_EMID_IRON1_FLAV0_High", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV1_High, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV1_High", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV5_High, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV5_High", "pt", "EMID");
 
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV0_NoPt, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV0_NoPt", "pt", "EMID");
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV1_NoPt, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV1_NoPt", "pt", "EMID");
-    PlotHist2(Pt_vs_EMID_IRON1_FLAV5_NoPt, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV5_NoPt", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV0_NoPt, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV0_NoPt", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV1_NoPt, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV1_NoPt", "pt", "EMID");
+    PlotHist2D(Pt_vs_EMID_IRON1_FLAV5_NoPt, sample, plot_dir, " Pt_vs_EMID_IRON1_FLAV5_NoPt", "pt", "EMID");
 }
 
