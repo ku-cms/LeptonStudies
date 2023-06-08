@@ -3367,13 +3367,13 @@ public :
    virtual void         Graph(std::string sample_name, float Lower_pt, float Higher_pt, std::string nam);
    virtual void         RunAll();
    virtual void         Random();
-   virtual void         Loop2();
+   virtual void         Loop();
    virtual void         LoadSignal(TChain *chain);
    virtual void         LoadBackground(TChain *chain);
-   virtual void         PlotHist(TH1F &hist, std::string sample_name, std::string plot_dir,std::string pt_cut, std::string specific, std::string plot_name, std::string variable);
    virtual void         SetupHist(TH1F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width);
-   virtual void         PlotHist2(TH2F &hist, std::string sample_name, std::string plot_dir, std::string plot_name, std::string variable, std::string variable2);
-   virtual void         SetupHist2(TH2F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width);
+   virtual void         SetupHist2D(TH2F &hist, std::string title, std::string x_title, std::string y_title, int color, int line_width);
+   virtual void         PlotHist(TH1F &hist, std::string sample_name, std::string plot_dir,std::string pt_cut, std::string specific, std::string plot_name, std::string variable);
+   virtual void         PlotHist2D(TH2F &hist, std::string sample_name, std::string plot_dir, std::string plot_name, std::string variable, std::string variable2);
    virtual void         ROC(TH1F &sigHist, TH1F &bkgHist, std::string plot_name);
    virtual std::string  GetLabel(std::string variable);
    virtual Bool_t       Notify();
@@ -3391,12 +3391,12 @@ TTJETS::TTJETS(TTree *tree) : fChain(0)
       // T2-4bd
       //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root");
       // TTJets_DiLept
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("5457F199-A129-2A40-8127-733D51A9A3E6.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/5457F199-A129-2A40-8127-733D51A9A3E6.root");
       if (!f || !f->IsOpen()) {
          // T2-4bd
          //f = new TFile("SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/4153AE9C-1215-A847-8E0A-DEBE98140664.root");
          // TTJets_DiLept
-         f = new TFile("5457F199-A129-2A40-8127-733D51A9A3E6.root");
+         f = new TFile("TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_NanoAODv9/5457F199-A129-2A40-8127-733D51A9A3E6.root");
       }
       // original
       f->GetObject("Events",tree);
