@@ -36,3 +36,46 @@ NanoClass n;
 n.Loop();
 ```
 
+Documentation for using ROOT Trees:
+https://root.cern.ch/root/htmldoc/guides/users-guide/Trees.html#simple-analysis-using-ttreedraw
+
+Create plots with ROOT commands:
+```
+root <file_path>
+
+MyTree->Draw(<variables>, <cuts>, <options>)
+```
+
+Example for a NANO AOD v9 TTJets ROOT file, creating 1D plots:
+```
+root <file_path>
+
+Events->Draw("LowPtElectron_pt", "LowPtElectron_pt<10 && LowPtElectron_genPartFlav==1")
+
+Events->Draw("LowPtElectron_embeddedID", "LowPtElectron_pt<10 && LowPtElectron_genPartFlav==1")
+```
+
+Example for a NANO AOD v9 TTJets ROOT file, creating 2D plots:
+```
+root <file_path>
+
+Events->Draw("LowPtElectron_embeddedID:LowPtElectron_pt", "LowPtElectron_pt<10 && LowPtElectron_genPartFlav==1", "colz")
+
+Events->Draw("LowPtElectron_embeddedID:LowPtElectron_pt", "LowPtElectron_pt<10 && LowPtElectron_genPartFlav==0", "colz")
+```
+
+FNAL LPC EOS redirector:
+```
+root://cmseos.fnal.gov/
+```
+
+Main FNAL redirector to search all locations (when you don't know where a file is):
+```
+root://cmsxrootd.fnal.gov/
+```
+
+Global CERN redirector:
+```
+root://cms-xrd-global.cern.ch/
+```
+
