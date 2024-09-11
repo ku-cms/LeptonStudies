@@ -2,6 +2,10 @@
 
 Study low transverse momenta leptons for CMS compressed SUSY searches.
 
+NANO AOD documentation page:
+
+https://cms-nanoaod-integration.web.cern.ch/autoDoc/
+
 ## Setup
 
 Setup commands to run at cmslpc or lxplus.
@@ -37,6 +41,7 @@ n.Loop();
 ```
 
 Documentation for using ROOT Trees:
+
 https://root.cern.ch/root/htmldoc/guides/users-guide/Trees.html#simple-analysis-using-ttreedraw
 
 Create plots with ROOT commands:
