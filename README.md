@@ -69,12 +69,12 @@ FNAL LPC EOS redirector:
 root://cmseos.fnal.gov/
 ```
 
-Main FNAL redirector to search all locations (when you don't know where a file is):
+Main FNAL redirector (searches all sites):
 ```
 root://cmsxrootd.fnal.gov/
 ```
 
-Global CERN redirector:
+Global CERN redirector (searches all sites):
 ```
 root://cms-xrd-global.cern.ch/
 ```
