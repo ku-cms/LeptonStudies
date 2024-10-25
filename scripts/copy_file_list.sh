@@ -23,6 +23,8 @@ OUTPUT_DIR=$2
 # Main FNAL redirector (searches all sites):
 REDIRECTOR=root://cmsxrootd.fnal.gov/
 
+START_TIME=$EPOCHREALTIME
+
 echo "FILE_LIST: ${FILE_LIST}"
 echo "OUTPUT_DIR: ${OUTPUT_DIR}"
 echo "REDIRECTOR: ${REDIRECTOR}"
@@ -53,11 +55,26 @@ mkdir -p ${OUTPUT_DIR}
 echo "Copying files using xrdcp..."
 
 while read line; do
-    echo "${line}"
+    echo " - ${line}"
+    xrdcp -f ${REDIRECTOR}${line} ${OUTPUT_DIR}
 done < ${FILE_LIST}
 
-# print number of files copied
+# Print number of files copied
+NUM_FILES=$(ls ${OUTPUT_DIR} | wc -l)
+echo "Number of files in output directory: ${NUM_FILES}"
+
+# Print storage size of output directory
+OUTPUT_SIZE=$(du -sh ${OUTPUT_DIR})
+echo "Storage size of output directory: ${OUTPUT_SIZE}"
+
+# Calculate run time
+END_TIME=$EPOCHREALTIME
+RUN_TIME_SEC=$(bc -l <<< "$END_TIME - $START_TIME")
+RUN_TIME_MIN=$(bc -l <<< "$RUN_TIME_SEC / 60")
+RUN_TIME_HR=$(bc -l <<< "$RUN_TIME_MIN / 60")
+
+# Print run time
+printf "Run time: %0.2f seconds = %0.2f minutes = %0.2f hours\n" ${RUN_TIME_SEC} ${RUN_TIME_MIN} ${RUN_TIME_HR}
 
 echo "Done!"
-
 

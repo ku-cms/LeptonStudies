@@ -44,7 +44,7 @@ dasgoclient -query="file dataset=${DATASET}" > ${OUTPUT}
 
 NUM_LINES=$(wc -l < ${OUTPUT})
 
-echo "Number of lines in output: ${NUM_LINES}"
+echo "Number of lines in output file: ${NUM_LINES}"
 
 echo "Done!"
 
