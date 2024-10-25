@@ -1,10 +1,10 @@
 # LeptonStudies
 
 Study low transverse momenta leptons for CMS compressed SUSY searches.
-
-NANO AOD documentation page:
-
-https://cms-nanoaod-integration.web.cern.ch/autoDoc/
+- Repository: https://github.com/ku-cms/LeptonStudies
+- CERN SWAN platform: https://swan.cern.ch/
+- CERN SWAN info: https://swan.web.cern.ch/swan/
+- NANO AOD documentation page: https://cms-nanoaod-integration.web.cern.ch/autoDoc/
 
 ## Setup
 
@@ -83,4 +83,3 @@ Global CERN redirector (searches all sites):
 ```
 root://cms-xrd-global.cern.ch/
 ```
-
