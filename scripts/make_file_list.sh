@@ -10,25 +10,28 @@
 # To run:
 # ./make_file_list.sh dataset_name output_file_name
 
-# User input:
+# User inputs:
 # - dataset name
 # - output file name
 
 # Output:
 # - text file containing file paths for dataset
 
+# User inputs:
 DATASET=$1
 OUTPUT=$2
 
 echo "DATASET: ${DATASET}"
 echo "OUTPUT: ${OUTPUT}"
 
+# Check if DATASET is empty.
 if [[ -z "$DATASET" ]]; then
     echo "ERROR: DATASET is empty."
     echo "Please provide a dataset name as the first argument."
     exit 1
 fi
 
+# Check if OUTPUT is empty.
 if [[ -z "$OUTPUT" ]]; then
     echo "ERROR: OUTPUT is empty."
     echo "Please provide an ouput file name as the second argument."
