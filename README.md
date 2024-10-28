@@ -1,6 +1,10 @@
 # LeptonStudies
 
 Study low transverse momenta leptons for CMS compressed SUSY searches.
+- Repository: https://github.com/ku-cms/LeptonStudies
+- CERN SWAN platform: https://swan.cern.ch/
+- CERN SWAN info: https://swan.web.cern.ch/swan/
+- NANO AOD documentation page: https://cms-nanoaod-integration.web.cern.ch/autoDoc/
 
 ## Setup
 
@@ -37,6 +41,7 @@ n.Loop();
 ```
 
 Documentation for using ROOT Trees:
+
 https://root.cern.ch/root/htmldoc/guides/users-guide/Trees.html#simple-analysis-using-ttreedraw
 
 Create plots with ROOT commands:
@@ -69,13 +74,12 @@ FNAL LPC EOS redirector:
 root://cmseos.fnal.gov/
 ```
 
-Main FNAL redirector to search all locations (when you don't know where a file is):
+Main FNAL redirector (searches all sites):
 ```
 root://cmsxrootd.fnal.gov/
 ```
 
-Global CERN redirector:
+Global CERN redirector (searches all sites):
 ```
 root://cms-xrd-global.cern.ch/
 ```
-
