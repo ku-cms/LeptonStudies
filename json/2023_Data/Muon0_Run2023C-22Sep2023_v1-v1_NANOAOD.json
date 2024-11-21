@@ -1,5 +1,5 @@
 {
-    "SingleMuon": {
+    "Muon_Data": {
         "files": {
             "/eos/user/c/caleb/CMS/datasets/2023_Data/Muon0_Run2023C-22Sep2023_v1-v1_NANOAOD/01e84393-6b2e-4d57-87a4-f71475c051a2.root": "Events", 
             "/eos/user/c/caleb/CMS/datasets/2023_Data/Muon0_Run2023C-22Sep2023_v1-v1_NANOAOD/030eead5-93f9-405c-863c-a62244712e91.root": "Events",
