@@ -1,0 +1,2 @@
+/store/mc/Run3Summer23BPixNanoAODv12/JpsiToEE_Pt-2To30_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2023_realistic_postBPix_v2-v2/80000/7520fb14-11a9-48ad-bd98-c1739dd5d24a.root
+/store/mc/Run3Summer23BPixNanoAODv12/JpsiToEE_Pt-2To30_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2023_realistic_postBPix_v2-v2/80000/dcc5b4d1-6125-48cc-b9ff-39fb7af2f289.root

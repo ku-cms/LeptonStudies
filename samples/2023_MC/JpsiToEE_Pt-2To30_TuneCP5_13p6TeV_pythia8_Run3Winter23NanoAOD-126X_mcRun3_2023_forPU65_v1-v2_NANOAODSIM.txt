@@ -1,0 +1,1 @@
+/store/mc/Run3Winter23NanoAOD/JpsiToEE_Pt-2To30_TuneCP5_13p6TeV_pythia8/NANOAODSIM/126X_mcRun3_2023_forPU65_v1-v2/2550000/c52b9176-58b0-40c3-8a0f-ae7fe6411c0c.root
