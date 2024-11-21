@@ -6,8 +6,10 @@ Study low transverse momenta leptons for CMS compressed SUSY searches.
 - CERN SWAN info: https://swan.web.cern.ch/swan/
 - CERN Box: https://cernbox.cern.ch/
 - CERN Box docs: https://cernbox.docs.cern.ch/
-- NANO AOD documentation page: https://cms-nanoaod-integration.web.cern.ch/autoDoc/
 - CMS Data Aggregation System (DAS): https://cmsweb.cern.ch/das/ 
+- NANO AOD documentation page: https://cms-nanoaod-integration.web.cern.ch/autoDoc/
+- coffea: https://github.com/CoffeaTeam/coffea
+- coffea docs: https://coffea-hep.readthedocs.io/
 
 ## Setup
 
