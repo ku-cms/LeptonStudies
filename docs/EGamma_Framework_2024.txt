@@ -1,0 +1,134 @@
+---------------------
+EGamma Framework 2024
+---------------------
+
+Repository (egamma-tnp):
+
+https://github.com/ikrommyd/egamma-tnp
+
+Command Line Tool Examples:
+
+https://github.com/ikrommyd/egamma-tnp/tree/master/examples
+
+nanoaod_filters example:
+
+https://github.com/ikrommyd/egamma-tnp/tree/master/examples/nanoaod_filters
+
+pypi project (egamma-tnp):
+
+https://pypi.org/project/egamma-tnp/
+
+-----------------------------------------------
+
+Install egamma-tnp in a Python environment:
+
+pip install egamma-tnp
+
+For Python 3:
+
+pip3 install egamma-tnp
+
+To develop the framework (make modifications), install in editable mode using the following:
+
+git clone git@github.com:ikrommyd/egamma-tnp.git
+cd egamma-tnp
+pip install -e .
+
+For Python 3:
+
+git clone git@github.com:ikrommyd/egamma-tnp.git
+cd egamma-tnp
+pip3 install -e .
+
+-----------------------------------------------
+
+Installation for running interactively (locally) on cmslpc:
+
+First, install conda and mamba from miniforge:
+
+https://github.com/conda-forge/miniforge
+
+Put miniforge in your nobackup directory on cmslpc:
+
+curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+bash Miniforge3-$(uname)-$(uname -m).sh
+
+Provide an installation path on nobackup:
+
+/uscms/home/caleb/nobackup/miniforge3
+
+conda init
+
+conda config --set auto_activate_base false
+
+Important:
+- Check that the conda and mamba scripts have been added to your ~/.basrc
+- Check that your ~/.bash_profile loads your ~/.bashrc
+
+Logout and login again.
+
+mamba activate
+mamba create -n egamma_env python=3.12
+mamba activate egamma_env
+
+Install egamma-tnp in mamba env:
+
+pip install egamma-tnp
+
+Confirm that egamma-tnp worked:
+
+pip list | grep egamma-tnp
+
+python
+import egamma_tnp
+quit()
+
+which run_analysis
+run_analysis --help
+
+Install xrootd in mamba env:
+
+mamba install xrootd
+
+pip list | grep xrootd
+
+python
+import XRootD
+quit()
+
+-----------------------------------------------
+
+Installation for using condor submission:
+
+lpcjobqueue is required to use condor submission
+
+https://github.com/CoffeaTeam/lpcjobqueue
+
+curl -OL https://raw.githubusercontent.com/CoffeaTeam/lpcjobqueue/main/bootstrap.sh
+bash bootstrap.sh
+./shell
+pip install .
+
+-----------------------------------------------
+
+grid certificate command:
+
+alias grid='voms-proxy-init --valid 192:00 -voms cms'
+
+Clone repository:
+
+git clone git@github.com:ikrommyd/egamma-tnp.git
+cd egamma-tnp
+
+Run example:
+
+grid
+
+cd examples/nanoaod_filters
+
+run_analysis --config config.json --settings settings.json --fileset fileset.json --binning binning.json --output simplecache::root://cmseos.fnal.gov//store/user/caleb/CMS_EGamma/egamma_test --executor threads
+
+Local options to pass to --executor: threads, processes, distributed
+
+-----------------------------------------------
+
