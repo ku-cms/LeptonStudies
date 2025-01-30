@@ -7,6 +7,7 @@ Study low transverse momenta leptons for CMS compressed SUSY searches.
 - Repository: https://github.com/ku-cms/LeptonStudies
 - CERN SWAN platform: https://swan.cern.ch/
 - CERN SWAN info: https://swan.web.cern.ch/swan/
+- CERN SWAN docs: https://swan.docs.cern.ch/
 - CERN Box: https://cernbox.cern.ch/
 - CERN Box docs: https://cernbox.docs.cern.ch/
 - CMS Data Aggregation System (DAS): https://cmsweb.cern.ch/das/ 
