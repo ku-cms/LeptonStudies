@@ -54,7 +54,7 @@ if [[ ! -f "$FILE_LIST" ]]; then
 fi
 
 # Create output directory.
-mkdir -p ${OUTPUT_DIR}
+#mkdir -p ${OUTPUT_DIR}
 
 echo "Copying files using xrdcp..."
 
