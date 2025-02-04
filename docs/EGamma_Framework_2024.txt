@@ -206,13 +206,18 @@ run_analysis --config config.json --settings settings.json --fileset fileset.jso
 
 (3) Prepare histograms using prepare_histograms.py:
 
+Arguments for prepare_histograms.py:
+--source:  input histogram .pkl file
+--target:  output histogram .root file
+--binning: output binning .pkl file
+
 Example 1:
 
 Using "LPC EOS output + xrdcp" example from above as input...
 
 cd egamma_output_2025_02_03_run_1
 
-python ../../../scripts/prepare_histograms.py --source HLT_Ele30_WPTight_Gsf_histos.pkl --target HLT_Ele30_WPTight_Gsf_histos.root --binning ../binning.json
+python ../../../scripts/prepare_histograms.py --source HLT_Ele30_WPTight_Gsf_histos.pkl --target HLT_Ele30_WPTight_Gsf_histos.root --binning binning.pkl
 
 Example 2:
 
@@ -220,7 +225,7 @@ Using "LPC nobackup output" example from above as input...
 
 cd egamma_output_2025_02_03_run_2/EGamma0_Run2023C-22Sep2023_v1-v1_NANOAOD/get_1d_pt_eta_phi_tnp_histograms_1
 
-python ../../../../../scripts/prepare_histograms.py --source HLT_Ele30_WPTight_Gsf_histos.pkl --target HLT_Ele30_WPTight_Gsf_histos.root --binning ../../../binning.json
+python ../../../../../scripts/prepare_histograms.py --source HLT_Ele30_WPTight_Gsf_histos.pkl --target HLT_Ele30_WPTight_Gsf_histos.root --binning binning.pkl
 
 -----------------------------------------------
 
