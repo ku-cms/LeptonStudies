@@ -62,7 +62,7 @@ conda init
 conda config --set auto_activate_base false
 
 Important:
-- Check that the conda and mamba scripts have been added to your ~/.basrc
+- Check that the conda and mamba scripts have been added to your ~/.bashrc
 - Check that your ~/.bash_profile loads your ~/.bashrc
 
 Logout and login again.
