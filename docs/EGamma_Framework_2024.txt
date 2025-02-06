@@ -20,7 +20,7 @@ https://pypi.org/project/egamma-tnp/
 
 -----------------------------------------------
 
-(1) Install egamma-tnp in a Python environment:
+(1) Installing egamma-tnp in a Python environment:
 
 pip install egamma-tnp
 
@@ -30,13 +30,13 @@ pip3 install egamma-tnp
 
 To develop the framework (make modifications), install in editable mode using the following:
 
-git clone git@github.com:ikrommyd/egamma-tnp.git
+git clone https://github.com/ikrommyd/egamma-tnp.git
 cd egamma-tnp
 pip install -e .
 
 For Python 3:
 
-git clone git@github.com:ikrommyd/egamma-tnp.git
+git clone https://github.com/ikrommyd/egamma-tnp.git
 cd egamma-tnp
 pip3 install -e .
 
@@ -53,9 +53,11 @@ Put miniforge in your nobackup directory on cmslpc:
 curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
 bash Miniforge3-$(uname)-$(uname -m).sh
 
-Provide an installation path on nobackup:
+Provide an installation path on nobackup, for example:
 
 /uscms/home/caleb/nobackup/miniforge3
+
+which conda
 
 conda init
 
@@ -125,15 +127,19 @@ source ~/.bash_profile
 
 Clone repository:
 
-git clone git@github.com:ikrommyd/egamma-tnp.git
+git clone https://github.com/ikrommyd/egamma-tnp.git
 
 -----------------------------------------------
 
 (2) Run the analysis framework using run_analysis:
 
-Initiate grid certificate using alias:
+Initiate grid certificate using grid alias (set up in step 1):
 
 grid
+
+Check that grid certificate is active:
+
+voms-proxy-info
 
 Activate mamba python environment:
 
