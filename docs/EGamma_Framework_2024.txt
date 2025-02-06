@@ -20,7 +20,7 @@ https://pypi.org/project/egamma-tnp/
 
 -----------------------------------------------
 
-Install egamma-tnp in a Python environment:
+(1) Install egamma-tnp in a Python environment:
 
 pip install egamma-tnp
 
@@ -42,7 +42,7 @@ pip3 install -e .
 
 -----------------------------------------------
 
-Installation for running interactively (locally) on cmslpc:
+(2) Installation for running interactively (locally) on cmslpc:
 
 First, install conda and mamba from miniforge:
 
@@ -62,7 +62,7 @@ conda init
 conda config --set auto_activate_base false
 
 Important:
-- Check that the conda and mamba scripts have been added to your ~/.basrc
+- Check that the conda and mamba scripts have been added to your ~/.bashrc
 - Check that your ~/.bash_profile loads your ~/.bashrc
 
 Logout and login again.
@@ -98,7 +98,7 @@ quit()
 
 -----------------------------------------------
 
-Installation for using condor submission:
+(3) Installation for using condor submission:
 
 lpcjobqueue is required to use condor submission
 
@@ -111,24 +111,121 @@ pip install .
 
 -----------------------------------------------
 
-grid certificate command:
+Running egamma-tnp:
+
+(1) First time setup:
+
+Add this grid certificate alias if you do not already have it (add to ~/.bash_profile):
 
 alias grid='voms-proxy-init --valid 192:00 -voms cms'
+
+Then run:
+
+source ~/.bash_profile
 
 Clone repository:
 
 git clone git@github.com:ikrommyd/egamma-tnp.git
-cd egamma-tnp
 
-Run example:
+-----------------------------------------------
+
+(2) Run the analysis framework using run_analysis:
+
+Initiate grid certificate using alias:
 
 grid
 
+Activate mamba python environment:
+
+mamba activate egamma_env
+
+In the egamma-tnp repository that you cloned, go to the directory examples/nanoaod_filters:
+
+cd egamma-tnp
 cd examples/nanoaod_filters
+
+Then, you can use one of the example run_analysis commands.
+
+Notes on run_analysis:
+
+Notes on input files (.json) for run_analysis:
+- config.json: defines analysis methods and parameters
+- settings.json: defines some of the analysis cuts
+- fileset.json: defines the input datasets and file paths
+- binning.json: defines the bins; for example, "el_pt_bins" for electron pT bins 
+
+Notes on output of run_analysis:
+- output: directory to store output
+- In the output directory, subdirectories for the dataset and method will be created
+- The output files are .pkl and .json
+
+More notes on run_analysis:
+- "cut_and_count" (in config.json): set to true for cut and count analysis; set to false to output dielectron mass histograms 
+- Local options to pass to --executor: threads, processes, distributed
+
+-----------------------------------------------
+
+Basic examples with output stored in LPC EOS area:
+
+Example 1 (output to LPC EOS area):
 
 run_analysis --config config.json --settings settings.json --fileset fileset.json --binning binning.json --output simplecache::root://cmseos.fnal.gov//store/user/caleb/CMS_EGamma/egamma_test --executor threads
 
-Local options to pass to --executor: threads, processes, distributed
+Example 2 (output to LPC EOS area):
+
+Added date and run number to output directory (egamma_output_2025_02_03_run_1).
+
+run_analysis --config config.json --settings settings.json --fileset fileset.json --binning binning.json --output simplecache::root://cmseos.fnal.gov//store/user/caleb/CMS_EGamma/egamma_output_2025_02_03_run_1 --executor threads
+
+Example xrdcp commands to copy from LPC EOS to nobackup:
+
+mkdir egamma_output_2025_02_03_run_1
+cd egamma_output_2025_02_03_run_1
+
+xrdcp root://cmseos.fnal.gov//store/user/caleb/CMS_EGamma/egamma_output_2025_02_03_run_1/EGamma0_Run2023C-22Sep2023_v1-v1_NANOAOD/get_1d_pt_eta_phi_tnp_histograms_1/HLT_Ele30_WPTight_Gsf_histos.pkl .
+
+xrdcp root://cmseos.fnal.gov//store/user/caleb/CMS_EGamma/egamma_output_2025_02_03_run_1/EGamma0_Run2023C-22Sep2023_v1-v1_NANOAOD/get_1d_pt_eta_phi_tnp_histograms_1/HLT_Ele30_WPTight_Gsf_report.json . 
+
+-----------------------------------------------
+
+Basic examples with output stored in LPC nobackup area.
+
+Example 1 (output to LPC nobackup area):
+
+Basic example; output to LPC nobackup area.
+
+run_analysis --config config.json --settings settings.json --fileset fileset.json --binning binning.json --output /uscms/home/caleb/nobackup/AlmaLinux9/CMS_EGamma/egamma-tnp/examples/nanoaod_filters/egamma_test --executor threads 
+
+Example 2 (output to LPC nobackup area):
+
+Added date and run number to output directory (egamma_output_2025_02_03_run_2).
+
+run_analysis --config config.json --settings settings.json --fileset fileset.json --binning binning.json --output /uscms/home/caleb/nobackup/AlmaLinux9/CMS_EGamma/egamma-tnp/examples/nanoaod_filters/egamma_output_2025_02_03_run_2 --executor threads 
+
+-----------------------------------------------
+
+(3) Prepare histograms using prepare_histograms.py:
+
+Arguments for prepare_histograms.py:
+--source:  input histogram .pkl file
+--target:  output histogram .root file
+--binning: output binning .pkl file
+
+Example 1:
+
+Using "LPC EOS output + xrdcp" example from above as input...
+
+cd egamma_output_2025_02_03_run_1
+
+python ../../../scripts/prepare_histograms.py --source HLT_Ele30_WPTight_Gsf_histos.pkl --target HLT_Ele30_WPTight_Gsf_histos.root --binning binning.pkl
+
+Example 2:
+
+Using "LPC nobackup output" example from above as input...
+
+cd egamma_output_2025_02_03_run_2/EGamma0_Run2023C-22Sep2023_v1-v1_NANOAOD/get_1d_pt_eta_phi_tnp_histograms_1
+
+python ../../../../../scripts/prepare_histograms.py --source HLT_Ele30_WPTight_Gsf_histos.pkl --target HLT_Ele30_WPTight_Gsf_histos.root --binning binning.pkl
 
 -----------------------------------------------
 
