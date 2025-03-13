@@ -1,8 +1,8 @@
 import uproot
 import numpy as np
 from scipy.optimize import curve_fit
-import matplotlib.pyplot as plt
 from scipy.stats import norm
+import matplotlib.pyplot as plt
 import mplhep as hep
 import basic_tools
 
@@ -15,7 +15,7 @@ def load_histogram(root_file, hist_name):
             return {"values": values, "edges": edges}
     return None
 
-def plotHist(hist, plot_dir, hist_name):
+def fit_hist(hist, hist_name, plot_dir):
     basic_tools.makeDir(plot_dir)
 
     plt.figure(figsize=(12, 8))
@@ -68,10 +68,16 @@ def plotHist(hist, plot_dir, hist_name):
              verticalalignment='top', bbox=dict(facecolor='white', alpha=0.8))
     
     # Set the plot title and label axes 
-    output_file = hist_name
-    plt.xlabel("pT")
     plt.title(hist_name)
+    plt.xlabel(r"$p_{T}$ [GeV]")
+    plt.ylabel("Number of events")
+    
+    # TODO: Replace with savePlot(plot_dir, plot_name)
+
+    # Save plot
+    output_file = hist_name
     plt.savefig(f"{plot_dir}/{output_file}.png")
+    plt.savefig(f"{plot_dir}/{output_file}.pdf")
     plt.close()
 
 def gaussian_exponential(x, A, mu, sigma, B, tau):
@@ -90,14 +96,19 @@ def compute_signal_background_events(x, popt):
     return signal_events, background_events
 
 def main():
-    # Specify the histogram name and open the ROOT file 
-    hist_name = "bin11_pt_32p00To34p00_Pass"
+    # Specify the histogram name and directory to save plots
+    hist_name   = "bin11_pt_32p00To34p00_Pass"
+    plot_dir    = "egamma_tnp_fits"
+    
+    # Open ROOT file
     #root_file = uproot.open("DY_2023C_pt_barrel.root")
     root_file = uproot.open("egamma_tnp_output/egamma_output_2025_02_03_run_1/HLT_Ele30_WPTight_Gsf_histos_pt_barrel.root")
+    
     # Load the histogram using the opened file and specified name
     hist = load_histogram(root_file, hist_name)
+    
     # Call the function to generate and save the plot, also assigning the name to match the histogram name
-    plotHist(hist, "egamma_tnp_fits", hist_name)
+    fit_hist(hist, hist_name, plot_dir)
 
 if __name__ == "__main__":
     main()
