@@ -90,12 +90,10 @@ def fit_hist(hist, hist_name, plot_dir):
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     
-    # TODO: Replace with savePlot(plot_dir, plot_name)
-
     # Save plot
-    output_file = hist_name
-    plt.savefig(f"{plot_dir}/{output_file}.png")
-    plt.savefig(f"{plot_dir}/{output_file}.pdf")
+    plot_name = f"fit_{hist_name}"
+    basic_tools.savePlot(plot_dir, plot_name)
+    
     plt.close()
     
     print("Finished fit!")
