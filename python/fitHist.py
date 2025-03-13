@@ -4,10 +4,12 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 import mplhep as hep
+import basic_tools
 
 # Specify the histogram name and open the ROOT file 
 histogram_name = "bin11_pt_32p00To34p00_Pass"
-root_file = uproot.open("DY_2023C_pt_barrel.root")
+#root_file = uproot.open("DY_2023C_pt_barrel.root")
+root_file = uproot.open("egamma_tnp_output/egamma_output_2025_02_03_run_1/HLT_Ele30_WPTight_Gsf_histos_pt_barrel.root")
 
 def load_histogram(root_file, hist_name):
     keys = {key.split(";")[0]: key for key in root_file.keys()}
@@ -37,6 +39,8 @@ def compute_signal_background_events(x, popt):
     return signal_events, background_events
 
 def plotHist(hist, plot_dir, output_file):
+    basic_tools.makeDir(plot_dir)
+
     plt.figure(figsize=(12, 8))
     hep.style.use("CMS")
 
@@ -93,6 +97,5 @@ def plotHist(hist, plot_dir, output_file):
     plt.close()
 
 # Call the function to generate and save the plot, also assigning the name to match the histogram name
-
-plotHist(hist, "plots", histogram_name)
+plotHist(hist, "egamma_tnp_fits", histogram_name)
 
