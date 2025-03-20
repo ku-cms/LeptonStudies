@@ -1,7 +1,6 @@
 # tools.py
 
 import os
-import ROOT
 import colors
 
 # creates directory if it does not exist
