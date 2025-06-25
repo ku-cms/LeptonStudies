@@ -11,6 +11,6 @@ Use arguments to specify what file you are fitting and how you fit.
 -- type: defines the signal and background to use. (i.e. dcb_lin, g_exp, etc)
       - Signals available: double crystal ball (dcb), gaussian (g), crystal ball x gaussian (cbg), double voigtian (dv).
       - Backgrounds available:: linear (lin), exponential (exp), phase space (ps), chebyshev polynomial (cheb), Bernstein polynomial (bpoly), CMS shape (cms).
--- interactive: If used, adds a visual fitter that is interactive (very useful)
+-- interactive: If used, adds a visual fitter that is interactive. (must have PySide6 installed)
 -- fix: fixes defined parameter to the value set. (i.e. “mu = 90, sigma = 2.5, etc”)
 -- cdf: Use cdf for signal and background shapes, will fall back to pdf if either function doesn’t have a cdf available
