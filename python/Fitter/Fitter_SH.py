@@ -1195,12 +1195,22 @@ def plot_combined_fit(results, plot_dir=".", data_type="DATA", fixed_params=None
 
     return fig_pass, fig_fail
 
-BINS_INFO_Z = {
-f"bin{i}": (f"pt_{lo}p00To{hi}p00", f"{lo:.2f}-{hi:.2f}")
-for i, (lo, hi) in enumerate([
-    (5,7), (7,10), (10,20), (20,45), (45,75), (75,500)
-])  
-}
+BINS_INFO_Z = {}
+
+if MASS == "Z":
+    BINS_INFO_Z = {
+    f"bin{i}": (f"pt_{lo}p00To{hi}p00", f"{lo:.2f}-{hi:.2f}")
+    for i, (lo, hi) in enumerate([
+        (5,7), (7,10), (10,20), (20,45), (45,75), (75,500)
+    ])  
+    }
+elif MASS == "Z_muon":
+    BINS_INFO_Z = {
+    f"bin{i+1}": (f"pt_{lo}p00To{hi}p00", f"{lo:.2f}-{hi:.2f}")
+    for i, (lo, hi) in enumerate([
+        (5,7), (7,10), (10,20), (20,45), (45,75), (75,500)
+    ])  
+    }
 
 BINS_INFO_JPsi = {
 f"bin{i}": (f"pt_{lo}p00To{hi}p00", f"{lo:.2f}-{hi:.2f}")
