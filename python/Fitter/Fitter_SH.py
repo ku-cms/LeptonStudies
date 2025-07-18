@@ -1596,6 +1596,7 @@ def main():
             "MC_DY2_2L_4J_endcap_gold_blp":             "gold_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_endcap.root",
             "MC_DY2_2L_4J_endcap_silver_blp":           "silver_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_endcap.root",
         }
+        bins_choices = list(BINS_INFO_Z.keys())
     elif args_mass.mass == "Z_muon":
         file_paths = {
             "muon_DATA":                                "Z_muon/Run2024/Nominal/NUM_gold_DEN_baselineplus_abseta_pt.root",
