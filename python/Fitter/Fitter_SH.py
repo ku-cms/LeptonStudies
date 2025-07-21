@@ -20,6 +20,22 @@ from numba_stats import cmsshape
 import os
 import pandas as pd
 
+from pathlib import Path
+
+def find_root_files(folder):
+    base = Path(folder)
+    if not base.exists():
+        raise FileNotFoundError(f"Folder not found: {base}")
+    return sorted(base.glob("**/*.root"))  # recursively find all ROOT files
+
+def find_matching_root_file(root_files, key):
+    matches = [f for f in root_files if key in f.name]
+    if not matches:
+        raise FileNotFoundError(f"No .root file matching '{key}' found.")
+    if len(matches) > 1:
+        print(f"Warning: multiple matches for '{key}', using first:\n  " + "\n  ".join(str(m) for m in matches))
+    return matches[0]
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--mass", required=True, choices=["Z", "JPsi", "JPsi_muon", "Z_muon"])
 args_mass, remaining_argv = parser.parse_known_args()
@@ -1492,147 +1508,99 @@ def main():
 
     if args_mass.mass == "Z":
         file_paths = {
-            #"DATA_barrel_1_tag":                        "blp_3gt/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_1.root",
-            "DATA_barrel_1":                            "blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_1.root",
-            #"DATA_barrel_1_gold_blp_tag":               "gold_blp_tag/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_1.root",
-            "DATA_barrel_1_gold_blp":                   "gold_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_1.root",
-            "DATA_barrel_1_silver_blp":                 "silver_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_1.root",
+            "DATA_barrel_1":                            "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_1.root",
+            "DATA_barrel_2":                            "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_2.root",
+            "DATA_endcap":                              "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_endcap.root",
+            "DATA_OLD_barrel_1":                        "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_1.root",  
+            "DATA_OLD_barrel_2":                        "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_2.root",
+            "DATA_OLD_endcap":                          "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_endcap.root",
+            "DATA_NEW_barrel_1":                        "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_1.root",  
+            "DATA_NEW_barrel_2":                        "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_2.root",
+            "DATA_NEW_endcap":                          "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_endcap.root",
+            "DATA_NEW_2_barrel_1":                      "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_1.root", 
+            "DATA_NEW_2_barrel_2":                      "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_2.root",  
+            "DATA_NEW_2_endcap":                        "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_endcap.root",  
+            "MC_DY_barrel_1":                           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_1.root",
+            "MC_DY_barrel_2":                           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_2.root",
+            "MC_DY_endcap":                             "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_endcap.root",
+            "MC_DY2_2L_2J_barrel_1":                    "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_1.root",
+            "MC_DY2_2L_2J_barrel_2":                    "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_2.root",  
+            "MC_DY2_2L_2J_endcap":                      "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_endcap.root",
+            "MC_DY2_2L_4J_barrel_1":                    "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_1.root",
+            "MC_DY2_2L_4J_barrel_2":                    "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_2.root",
+            "MC_DY2_2L_4J_endcap":                      "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_endcap.root",
 
-            #"DATA_barrel_2_tag":                        "blp_3gt/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_2.root",
-            "DATA_barrel_2":                            "blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_2.root",
-            #"DATA_barrel_2_gold_blp_tag":               "gold_blp_tag/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_2.root",
-            "DATA_barrel_2_gold_blp":                   "gold_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_2.root",
-            "DATA_barrel_2_silver_blp":                 "silver_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_2.root",
+            "DATA_barrel_1_gold_blp":                   "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_1.root",
+            "DATA_barrel_2_gold_blp":                   "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_2.root",
+            "DATA_endcap_gold_blp":                     "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_endcap.root",
+            "DATA_OLD_barrel_1_gold_blp":               "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_1.root",
+            "DATA_OLD_barrel_2_gold_blp":               "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_2.root",
+            "DATA_OLD_endcap_gold_blp":                 "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_endcap.root",
+            "DATA_NEW_barrel_1_gold_blp":               "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_1.root",
+            "DATA_NEW_barrel_2_gold_blp":               "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_2.root",
+            "DATA_NEW_endcap_gold_blp":                 "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_endcap.root",
+            "DATA_NEW_2_barrel_1_gold_blp":             "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_1.root",
+            "DATA_NEW_2_barrel_2_gold_blp":             "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_2.root",
+            "DATA_NEW_2_endcap_gold_blp":               "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_endcap.root",
+            "MC_DY_barrel_1_gold_blp":                  "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_1.root",
+            "MC_DY_barrel_2_gold_blp":                  "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_2.root",
+            "MC_DY_endcap_gold_blp":                    "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_endcap.root",
+            "MC_DY2_2L_2J_barrel_1_gold_blp":           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_1.root",
+            "MC_DY2_2L_2J_barrel_2_gold_blp":           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_2.root",
+            "MC_DY2_2L_2J_endcap_gold_blp":             "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_endcap.root",
+            "MC_DY2_2L_4J_barrel_1_gold_blp":           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_1.root",
+            "MC_DY2_2L_4J_barrel_2_gold_blp":           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_2.root",
+            "MC_DY2_2L_4J_endcap_gold_blp":             "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/gold_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_endcap.root",
 
-            #"DATA_endcap_tag":                          "blp_3gt/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_endcap.root",
-            "DATA_endcap":                              "blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_endcap.root",
-            #"DATA_endcap_gold_blp_tag":                 "gold_blp_tag/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_endcap.root",
-            "DATA_endcap_gold_blp":                     "gold_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_endcap.root",
-            "DATA_endcap_silver_blp":                   "silver_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_endcap.root",
-            
-            #"DATA_NEW_barrel_1_tag":                    "blp_3gt/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_1.root",
-            "DATA_OLD_barrel_1":                        "blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_1.root",  
-            #"DATA_NEW_barrel_1_gold_blp_tag":           "gold_blp_tag/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_1.root",
-            "DATA_OLD_barrel_1_gold_blp":               "gold_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_1.root",
-            "DATA_OLD_barrel_1_silver_blp":             "silver_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_1.root",    
-
-            #"DATA_NEW_barrel_2_tag":                    "blp_3gt/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_2.root",
-            "DATA_OLD_barrel_2":                        "blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_2.root",
-            #"DATA_NEW_barrel_2_gold_blp_tag":           "gold_blp_tag/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_2.root",
-            "DATA_OLD_barrel_2_gold_blp":               "gold_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_2.root",
-            "DATA_OLD_barrel_2_silver_blp":             "silver_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_2.root",
-            
-            #"DATA_NEW_endcap_tag":                      "blp_3gt/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_endcap.root",
-            "DATA_OLD_endcap":                          "blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_endcap.root",
-            #"DATA_NEW_endcap_gold_blp_tag":             "gold_blp_tag/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_endcap.root",
-            "DATA_OLD_endcap_gold_blp":                 "gold_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_endcap.root",
-            "DATA_OLD_endcap_silver_blp":               "silver_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_endcap.root",
-
-            "DATA_NEW_barrel_1":                        "blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_1.root",  
-            "DATA_NEW_barrel_1_gold_blp":               "gold_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_1.root",
-            "DATA_NEW_barrel_1_silver_blp":             "silver_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_1.root",
-
-            "DATA_NEW_barrel_2":                        "blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_2.root",
-            "DATA_NEW_barrel_2_gold_blp":               "gold_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_2.root",
-            "DATA_NEW_barrel_2_silver_blp":             "silver_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_2.root",
-            
-            "DATA_NEW_endcap":                          "blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_endcap.root",
-            "DATA_NEW_endcap_gold_blp":                 "gold_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_endcap.root",
-            "DATA_NEW_endcap_silver_blp":               "silver_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_endcap.root",
-
-            "DATA_NEW_2_barrel_1":                      "blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_1.root", 
-            "DATA_NEW_2_barrel_1_gold_blp":             "gold_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_1.root",
-            "DATA_NEW_2_barrel_1_silver_blp":           "silver_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_1.root",
-
-            "DATA_NEW_2_barrel_2":                      "blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_2.root",  
-            "DATA_NEW_2_barrel_2_gold_blp":             "gold_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_2.root",
-            "DATA_NEW_2_barrel_2_silver_blp":           "silver_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_2.root",
-
-            "DATA_NEW_2_endcap":                        "blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_endcap.root",  
-            "DATA_NEW_2_endcap_gold_blp":               "gold_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_endcap.root",
-            "DATA_NEW_2_endcap_silver_blp":             "silver_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_endcap.root",
-
-            #"MC_DY_barrel_1_tag":                       "blp_3gt/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_1.root",
-            "MC_DY_barrel_1":                           "blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_1.root",
-            #"MC_DY_barrel_1_gold_blp_tag":              "gold_blp_tag/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_1.root",
-            "MC_DY_barrel_1_gold_blp":                  "gold_blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_1.root",
-            "MC_DY_barrel_1_silver_blp":                "silver_blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_1.root",
-
-            #"MC_DY_barrel_2_tag":                       "blp_3gt/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_2.root",
-            "MC_DY_barrel_2":                           "blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_2.root",
-            #"MC_DY_barrel_2_gold_blp_tag":              "gold_blp_tag/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_2.root",
-            "MC_DY_barrel_2_gold_blp":                  "gold_blpd_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_2.root",
-            "MC_DY_barrel_2_silver_blp":                "silver_blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_2.root",
-
-            #"MC_DY_endcap_tag":                         "blp_3gt/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_endcap.root",
-            "MC_DY_endcap":                             "blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_endcap.root",
-            #"MC_DY_endcap_gold_blp_tag":                "gold_blp_tag/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_endcap.root",
-            "MC_DY_endcap_gold_blp":                    "gold_blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_endcap.root",
-            "MC_DY_endcap_silver_blp":                  "silver_blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_endcap.root",
-
-            #"MC_DY2_2L_2J_barrel_1_tag":                "blp_3gt/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_1.root",
-            "MC_DY2_2L_2J_barrel_1":                    "blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_1.root",
-            #"MC_DY2_2L_2J_barrel_1_gold_blp_tag":       "gold_blp_tag/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_1.root",
-            "MC_DY2_2L_2J_barrel_1_gold_blp":           "gold_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_1.root",
-            "MC_DY2_2L_2J_barrel_1_silver_blp":         "silver_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_1.root",
-
-            #"MC_DY2_2L_2J_barrel_2_tag":                "blp_3gt/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_2.root",
-            "MC_DY2_2L_2J_barrel_2":                    "blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_2.root",  
-            #"MC_DY2_2L_2J_barrel_2_gold_blp_tag":       "gold_blp_tag/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_2.root",
-            "MC_DY2_2L_2J_barrel_2_gold_blp":           "gold_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_2.root",
-            "MC_DY2_2L_2J_barrel_2_silver_blp":         "silver_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_2.root",
-
-            #"MC_DY2_2L_2J_endcap_tag":                  "blp_3gt/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_endcap.root",
-            "MC_DY2_2L_2J_endcap":                      "blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_endcap.root",
-            #"MC_DY2_2L_2J_endcap_gold_blp_tag":         "gold_blp_tag/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_endcap.root",
-            "MC_DY2_2L_2J_endcap_gold_blp":             "gold_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_endcap.root",
-            "MC_DY2_2L_2J_endcap_silver_blp":           "silver_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_endcap.root",
-
-            #"MC_DY2_2L_4J_barrel_1_tag":                "blp_3gt/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_1.root",
-            "MC_DY2_2L_4J_barrel_1":                    "blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_1.root",
-            #"MC_DY2_2L_4J_barrel_1_gold_blp_tag":       "gold_blp_tag/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_1.root", 
-            "MC_DY2_2L_4J_barrel_1_gold_blp":           "gold_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_1.root",
-            "MC_DY2_2L_4J_barrel_1_silver_blp":         "silver_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_1.root",
-
-            #"MC_DY2_2L_4J_barrel_2_tag":                "blp_3gt/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_2.root",
-            "MC_DY2_2L_4J_barrel_2":                    "blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_2.root",
-            #"MC_DY2_2L_4J_barrel_2_gold_blp_tag":       "gold_blp_tag/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_2.root",
-            "MC_DY2_2L_4J_barrel_2_gold_blp":           "gold_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_2.root",
-            "MC_DY2_2L_4J_barrel_2_silver_blp":         "silver_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_2.root",
-
-            #"MC_DY2_2L_4J_endcap_tag":                  "blp_3gt/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_endcap.root",
-            "MC_DY2_2L_4J_endcap":                      "blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_endcap.root",
-            #"MC_DY2_2L_4J_endcap_gold_blp_tag":         "gold_blp_tag/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_endcap.root",
-            "MC_DY2_2L_4J_endcap_gold_blp":             "gold_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_endcap.root",
-            "MC_DY2_2L_4J_endcap_silver_blp":           "silver_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_endcap.root",
+            "DATA_barrel_1_silver_blp":                 "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_1.root",
+            "DATA_barrel_2_silver_blp":                 "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_barrel_2.root",
+            "DATA_endcap_silver_blp":                   "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_23D_histos_pt_endcap.root",
+            "DATA_OLD_barrel_1_silver_blp":             "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_1.root",    
+            "DATA_OLD_barrel_2_silver_blp":             "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_barrel_2.root",            
+            "DATA_OLD_endcap_silver_blp":               "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_OLD_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_OLD_23D_histos_pt_endcap.root",
+            "DATA_NEW_barrel_1_silver_blp":             "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_1.root",
+            "DATA_NEW_barrel_2_silver_blp":             "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_barrel_2.root",
+            "DATA_NEW_endcap_silver_blp":               "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_NEW_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_23D_histos_pt_endcap.root",
+            "DATA_NEW_2_barrel_1_silver_blp":           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_1.root",
+            "DATA_NEW_2_barrel_2_silver_blp":           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_barrel_2.root",
+            "DATA_NEW_2_endcap_silver_blp":             "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/DATA_NEW_2_23D_histos_pt_endcap.root",
+            "MC_DY_barrel_1_silver_blp":                "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_1.root",
+            "MC_DY_barrel_2_silver_blp":                "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_barrel_2.root",
+            "MC_DY_endcap_silver_blp":                  "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/MC_DY_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY_23D_histos_pt_endcap.root",
+            "MC_DY2_2L_2J_barrel_1_silver_blp":         "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_1.root",
+            "MC_DY2_2L_2J_barrel_2_silver_blp":         "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_barrel_2.root",
+            "MC_DY2_2L_2J_endcap_silver_blp":           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/MC_DY2_2L_2J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_2J_23D_histos_pt_endcap.root",
+            "MC_DY2_2L_4J_barrel_1_silver_blp":         "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_1.root",
+            "MC_DY2_2L_4J_barrel_2_silver_blp":         "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_barrel_2.root",
+            "MC_DY2_2L_4J_endcap_silver_blp":           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/silver_blp_big/MC_DY2_2L_4J_2023/get_1d_pt_eta_phi_tnp_histograms_1/MC_DY2_2L_4J_23D_histos_pt_endcap.root",
         }
         bins_choices = list(BINS_INFO_Z.keys())
     elif args_mass.mass == "Z_muon":
         file_paths = {
-            "muon_DATA":                                "Z_muon/Run2024/Nominal/NUM_gold_DEN_baselineplus_abseta_pt.root",
-            "muon_MC_DY_amcatnlo":                      "Z_muon/DY_amcatnlo/Nominal/NUM_gold_DEN_baselineplus_abseta_pt.root",
-            "muon_MC_DY_madgraph":                      "Z_muon/DY_madgraph/Nominal/NUM_gold_DEN_baselineplus_abseta_pt.root",
+            "muon_DATA":                                "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/Z_muon/Run2024/Nominal/NUM_gold_DEN_baselineplus_abseta_pt.root",
+            "muon_MC_DY_amcatnlo":                      "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/Z_muon/DY_amcatnlo/Nominal/NUM_gold_DEN_baselineplus_abseta_pt.root",
+            "muon_MC_DY_madgraph":                      "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/Z_muon/DY_madgraph/Nominal/NUM_gold_DEN_baselineplus_abseta_pt.root",
         }
         bins_choices = list(BINS_INFO_Z.keys())
     elif args_mass.mass == "JPsi_muon":
         file_paths = {
-        "DATA_muon_test":         "DATA_muon_test/NUM_gold_DEN_baselineplus_abseta_pt.root",
-        "MC_muon_test":           "muon_root_tests/NUM_gold_DEN_baselineplus_abseta_pt.root"
+        "DATA_muon_test":         "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/DATA_muon_test/NUM_gold_DEN_baselineplus_abseta_pt.root",
+        "MC_muon_test":           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/muon_root_tests/NUM_gold_DEN_baselineplus_abseta_pt.root"
         }
         bins_choices = list(BINS_INFO_JPsi_muon.keys())
     elif args_mass.mass == "JPsi":
         file_paths = {
-        "DATA_JPsi_barrel_1":               "jpsi/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_1.root",
-        "DATA_JPsi_barrel_2":               "jpsi/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_2.root",
-        "DATA_JPsi_endcap":                 "jpsi/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_endcap.root",
+        "DATA_JPsi_barrel_1":               "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/jpsi/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_1.root",
+        "DATA_JPsi_barrel_2":               "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/jpsi/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_2.root",
+        "DATA_JPsi_endcap":                 "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/jpsi/DATA_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_endcap.root",
 
-        "DATA_NEW_2_JPsi_barrel_1":         "jpsi/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_1.root",
-        "DATA_NEW_2_JPsi_barrel_2":         "jpsi/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_2.root",
-        "DATA_NEW_2_JPsi_endcap":           "jpsi/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_endcap.root",
+        "DATA_NEW_2_JPsi_barrel_1":         "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/jpsi/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_1.root",
+        "DATA_NEW_2_JPsi_barrel_2":         "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/jpsi/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_2.root",
+        "DATA_NEW_2_JPsi_endcap":           "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/jpsi/DATA_NEW_2_2023D/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_endcap.root",
 
-        "MC_JPsi_barrel_1":                 "jpsi/MC_JPsi_2023/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_1.root",
-        "MC_JPsi_barrel_2":                 "jpsi/MC_JPsi_2023/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_2.root",
-        "MC_JPsi_endcap":                   "jpsi/MC_JPsi_2023/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_endcap.root",
+        "MC_JPsi_barrel_1":                 "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/jpsi/MC_JPsi_2023/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_1.root",
+        "MC_JPsi_barrel_2":                 "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/jpsi/MC_JPsi_2023/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_barrel_2.root",
+        "MC_JPsi_endcap":                   "/uscms/home/hortua/nobackup/egamma-tnp/examples/nanoaod_filters_custom/jpsi/MC_JPsi_2023/get_1d_pt_eta_phi_tnp_histograms_1/psihistos_pt_endcap.root",
 
         }
         bins_choices = list(BINS_INFO_JPsi.keys())
